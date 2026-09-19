@@ -2,6 +2,21 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { makeId } from '../lib/id'
 import { detectMemory, generateReply } from '../lib/localAssistant'
+import {
+  cloudDeleteGoal,
+  cloudDeleteMemory,
+  cloudWriteCheckIn,
+  cloudWriteGoal,
+  cloudWriteMemory,
+  cloudWriteMessage,
+  cloudWriteProfile,
+  isFirebaseConfigured,
+  signInWithGoogle as cloudSignInWithGoogle,
+  signOutCloud as cloudSignOutCloud,
+  startCloud,
+  type CloudStatus,
+  type CloudUser,
+} from '../lib/cloud'
 import type { AppState, ChatMessage, CheckIn, Goal, Memory, MemoryKind, Milestone } from '../types'
 
 function isoToday(): string {
@@ -15,6 +30,15 @@ function computeStreak(lastActiveDate: string | null, currentStreak: number): nu
   const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10)
   if (lastActiveDate === yesterday) return (currentStreak || 0) + 1
   return 1
+}
+
+function byCreatedAtDesc<T extends { createdAt: string }>(items: T[]): T[] {
+  return [...items].sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+}
+
+interface CloudSlice {
+  cloudStatus: CloudStatus
+  cloudUser: CloudUser | null
 }
 
 interface AppActions {
@@ -31,6 +55,9 @@ interface AppActions {
   addCheckIn: (mood: number, energy: number, note: string) => void
   touchActivity: () => void
   resetAll: () => void
+  initCloud: () => void
+  signInWithGoogle: () => Promise<void>
+  signOutCloud: () => Promise<void>
 }
 
 const initialState: AppState = {
@@ -50,18 +77,30 @@ const initialState: AppState = {
   streak: 0,
 }
 
-export const useAppStore = create<AppState & AppActions>()(
+const initialCloud: CloudSlice = {
+  cloudStatus: isFirebaseConfigured ? 'connecting' : 'unconfigured',
+  cloudUser: null,
+}
+
+export const useAppStore = create<AppState & AppActions & CloudSlice>()(
   persist(
     (set, get) => ({
       ...initialState,
+      ...initialCloud,
 
-      setUserName: (name) => set({ userName: name.trim() }),
+      setUserName: (name) => {
+        const userName = name.trim()
+        set({ userName })
+        cloudWriteProfile({ userName })
+      },
 
       touchActivity: () =>
-        set((s) => ({
-          streak: computeStreak(s.lastActiveDate, s.streak),
-          lastActiveDate: isoToday(),
-        })),
+        set((s) => {
+          const streak = computeStreak(s.lastActiveDate, s.streak)
+          const lastActiveDate = isoToday()
+          cloudWriteProfile({ streak, lastActiveDate })
+          return { streak, lastActiveDate }
+        }),
 
       sendMessage: (text) => {
         const trimmed = text.trim()
@@ -93,7 +132,9 @@ export const useAppStore = create<AppState & AppActions>()(
         const state = get()
         const isFirstReal = state.messages.filter((m) => m.role === 'user').length === 0
         if (isFirstReal && !state.userName && trimmed.split(' ').length <= 4) {
-          set({ userName: trimmed.replace(/^(i'?m|call me|my name is)\s+/i, '').trim() })
+          const userName = trimmed.replace(/^(i'?m|call me|my name is)\s+/i, '').trim()
+          set({ userName })
+          cloudWriteProfile({ userName })
         }
 
         const reply = generateReply(trimmed, {
@@ -116,62 +157,77 @@ export const useAppStore = create<AppState & AppActions>()(
           messages: [...s.messages, userMsg, assistantMsg],
           memories: savedMemory ? [savedMemory, ...s.memories] : s.memories,
         }))
+
+        cloudWriteMessage(userMsg)
+        cloudWriteMessage(assistantMsg)
+        if (savedMemory) cloudWriteMemory(savedMemory)
       },
 
-      addMemory: (text, kind, tags = []) =>
-        set((s) => ({
-          memories: [
-            {
-              id: makeId(),
-              text: text.trim(),
-              kind,
-              tags,
-              createdAt: new Date().toISOString(),
-              pinned: false,
-              source: 'manual',
-            },
-            ...s.memories,
-          ],
-        })),
+      addMemory: (text, kind, tags = []) => {
+        const memory: Memory = {
+          id: makeId(),
+          text: text.trim(),
+          kind,
+          tags,
+          createdAt: new Date().toISOString(),
+          pinned: false,
+          source: 'manual',
+        }
+        set((s) => ({ memories: [memory, ...s.memories] }))
+        cloudWriteMemory(memory)
+      },
 
-      removeMemory: (id) => set((s) => ({ memories: s.memories.filter((m) => m.id !== id) })),
+      removeMemory: (id) => {
+        set((s) => ({ memories: s.memories.filter((m) => m.id !== id) }))
+        cloudDeleteMemory(id)
+      },
 
-      togglePinMemory: (id) =>
+      togglePinMemory: (id) => {
         set((s) => ({
           memories: s.memories.map((m) => (m.id === id ? { ...m, pinned: !m.pinned } : m)),
-        })),
+        }))
+        const updated = get().memories.find((m) => m.id === id)
+        if (updated) cloudWriteMemory(updated)
+      },
 
-      addGoal: (title, why, targetDate) =>
-        set((s) => ({
-          goals: [
-            {
-              id: makeId(),
-              title: title.trim(),
-              why: why.trim(),
-              status: 'active',
-              createdAt: new Date().toISOString(),
-              targetDate,
-              milestones: [],
-            },
-            ...s.goals,
-          ],
-        })),
+      addGoal: (title, why, targetDate) => {
+        const goal: Goal = {
+          id: makeId(),
+          title: title.trim(),
+          why: why.trim(),
+          status: 'active',
+          createdAt: new Date().toISOString(),
+          targetDate,
+          milestones: [],
+        }
+        set((s) => ({ goals: [goal, ...s.goals] }))
+        cloudWriteGoal(goal)
+      },
 
-      removeGoal: (id) => set((s) => ({ goals: s.goals.filter((g) => g.id !== id) })),
+      removeGoal: (id) => {
+        set((s) => ({ goals: s.goals.filter((g) => g.id !== id) }))
+        cloudDeleteGoal(id)
+      },
 
-      setGoalStatus: (id, status) =>
-        set((s) => ({ goals: s.goals.map((g) => (g.id === id ? { ...g, status } : g)) })),
+      setGoalStatus: (id, status) => {
+        set((s) => ({ goals: s.goals.map((g) => (g.id === id ? { ...g, status } : g)) }))
+        const updated = get().goals.find((g) => g.id === id)
+        if (updated) cloudWriteGoal(updated)
+      },
 
-      addMilestone: (goalId, text) =>
+      addMilestone: (goalId, text) => {
         set((s) => ({
           goals: s.goals.map((g) =>
             g.id === goalId
               ? { ...g, milestones: [...g.milestones, { id: makeId(), text: text.trim(), done: false } as Milestone] }
               : g,
           ),
-        })),
+        }))
+        const updated = get().goals.find((g) => g.id === goalId)
+        if (updated) cloudWriteGoal(updated)
+      },
 
-      toggleMilestone: (goalId, milestoneId) =>
+      toggleMilestone: (goalId, milestoneId) => {
         set((s) => ({
           goals: s.goals.map((g) =>
             g.id === goalId
@@ -181,7 +237,10 @@ export const useAppStore = create<AppState & AppActions>()(
                 }
               : g,
           ),
-        })),
+        }))
+        const updated = get().goals.find((g) => g.id === goalId)
+        if (updated) cloudWriteGoal(updated)
+      },
 
       addCheckIn: (mood, energy, note) => {
         get().touchActivity()
@@ -193,13 +252,51 @@ export const useAppStore = create<AppState & AppActions>()(
           note: note.trim(),
         }
         set((s) => ({ checkIns: [entry, ...s.checkIns] }))
+        cloudWriteCheckIn(entry)
       },
 
       resetAll: () => set(initialState),
+
+      initCloud: () => {
+        startCloud(
+          {
+            onStatus: (cloudStatus) => set({ cloudStatus }),
+            onUser: (cloudUser) => set({ cloudUser }),
+            onProfile: (data) => {
+              if (!data) return
+              set((s) => ({
+                userName: data.userName ?? s.userName,
+                streak: data.streak ?? s.streak,
+                lastActiveDate: data.lastActiveDate !== undefined ? data.lastActiveDate : s.lastActiveDate,
+              }))
+            },
+            onMemories: (items) => {
+              if (items.length > 0) set({ memories: byCreatedAtDesc(items) })
+            },
+            onGoals: (items) => {
+              if (items.length > 0) set({ goals: byCreatedAtDesc(items) })
+            },
+            onCheckIns: (items) => {
+              if (items.length > 0) set({ checkIns: [...items].sort((a, b) => b.date.localeCompare(a.date)) })
+            },
+            onMessages: (items) => {
+              if (items.length > 0) set({ messages: [...items].sort((a, b) => a.createdAt.localeCompare(b.createdAt)) })
+            },
+          },
+          () => get(),
+        )
+      },
+
+      signInWithGoogle: () => cloudSignInWithGoogle(),
+      signOutCloud: () => cloudSignOutCloud(),
     }),
     {
       name: 'my-assistant-store',
       version: 1,
+      partialize: (state) => {
+        const { cloudStatus: _cloudStatus, cloudUser: _cloudUser, ...rest } = state
+        return rest
+      },
     },
   ),
 )

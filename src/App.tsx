@@ -4,6 +4,7 @@ import { ChatView } from './components/ChatView'
 import { MemoryView } from './components/MemoryView'
 import { GoalsView } from './components/GoalsView'
 import { DashboardView } from './components/DashboardView'
+import { AccountMenu } from './components/AccountMenu'
 import { useAppStore } from './store/useAppStore'
 
 type Tab = 'chat' | 'memories' | 'goals' | 'growth'
@@ -19,10 +20,12 @@ export default function App() {
   const [tab, setTab] = useState<Tab>('chat')
   const streak = useAppStore((s) => s.streak)
   const touchActivity = useAppStore((s) => s.touchActivity)
+  const initCloud = useAppStore((s) => s.initCloud)
 
   useEffect(() => {
     touchActivity()
-  }, [touchActivity])
+    initCloud()
+  }, [touchActivity, initCloud])
 
   return (
     <div className="flex h-dvh flex-col bg-[#0b0b14] text-slate-100">
@@ -33,11 +36,14 @@ export default function App() {
           </div>
           <span className="text-sm font-semibold tracking-tight">My Assistant</span>
         </div>
-        {streak > 0 && (
-          <div className="flex items-center gap-1 rounded-full bg-orange-500/15 px-2.5 py-1 text-xs font-medium text-orange-300">
-            <Flame size={13} /> {streak}
-          </div>
-        )}
+        <div className="flex items-center gap-2">
+          <AccountMenu />
+          {streak > 0 && (
+            <div className="flex items-center gap-1 rounded-full bg-orange-500/15 px-2.5 py-1 text-xs font-medium text-orange-300">
+              <Flame size={13} /> {streak}
+            </div>
+          )}
+        </div>
       </header>
 
       <div className="flex min-h-0 flex-1">

@@ -9,7 +9,7 @@ An installable AI companion app that remembers what matters to you and helps you
 - **Goals** — set goals with milestones and track progress.
 - **Growth dashboard** — daily mood/energy check-ins, a trend chart, and a day streak to keep you coming back.
 
-Everything is stored locally in your browser (`localStorage`) — no account or server required, and it's private to your device.
+By default everything is stored locally in your browser (`localStorage`) — no account or server required. Connect a Firebase project (see below) and it syncs to the cloud instead, so your assistant follows you across devices.
 
 ## Install as an app
 
@@ -25,6 +25,65 @@ npm run lint      # lint
 npm run preview   # preview the production build
 ```
 
+## Cloud sync with Firebase (optional)
+
+Firebase is entirely opt-in. With no configuration, the app works fully offline using `localStorage`. Add a Firebase project's web config and it automatically switches to Firestore + Auth, syncing memories, goals, check-ins, and chat history in real time.
+
+### 1. Create a Firebase project
+
+1. Go to the [Firebase console](https://console.firebase.google.com/) and create a project (or reuse one).
+2. Add a **Web app** to it, and copy the `firebaseConfig` values it gives you.
+3. Under **Build → Authentication → Sign-in method**, enable:
+   - **Anonymous** (required — every device gets a private identity automatically, no login needed)
+   - **Google** (optional — lets a user sign in to carry their data across devices)
+4. Under **Build → Firestore Database**, create a database (production mode is fine — the rules below lock it down).
+
+### 2. Configure the app
+
+Copy `.env.example` to `.env.local` and fill in the values from step 1:
+
+```bash
+cp .env.example .env.local
+```
+
+```
+VITE_FIREBASE_API_KEY=...
+VITE_FIREBASE_AUTH_DOMAIN=...
+VITE_FIREBASE_PROJECT_ID=...
+VITE_FIREBASE_STORAGE_BUCKET=...
+VITE_FIREBASE_MESSAGING_SENDER_ID=...
+VITE_FIREBASE_APP_ID=...
+```
+
+Restart `npm run dev` after editing `.env.local`.
+
+### 3. Deploy Firestore security rules
+
+`firestore.rules` (included in this repo) scopes every user to their own data — read/write is only allowed under `users/{their own uid}`. Deploy it with the [Firebase CLI](https://firebase.google.com/docs/cli):
+
+```bash
+npm install -g firebase-tools
+firebase login
+firebase use --add          # pick your project
+firebase deploy --only firestore:rules
+```
+
+### How it behaves
+
+- On first load with Firebase configured, the app signs in anonymously in the background — no login screen, sync starts immediately for that device.
+- If there's existing local data on that device (from before Firebase was connected), it's migrated up to that anonymous account once, automatically.
+- Tapping **"Sync across devices"** in the header signs in with Google and links it to the current session, so the same account (and its data) can be reached from any device by signing in with that Google account there too.
+- Signing out starts a fresh anonymous session on that device; your Google-linked data is untouched and comes back the next time you sign in.
+
+### Optional: host it on Firebase Hosting
+
+```bash
+npm run build
+firebase deploy --only hosting
+```
+
+`firebase.json` is already set up to serve `dist/` as a single-page app.
+
 ## Stack
 
-React + TypeScript + Vite, Tailwind CSS v4, Zustand (persisted state), Recharts, `vite-plugin-pwa`.
+React + TypeScript + Vite, Tailwind CSS v4, Zustand (local persisted state), Recharts, `vite-plugin-pwa`, and an optional Firebase (Auth + Firestore) sync layer.
