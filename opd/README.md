@@ -22,7 +22,7 @@ Every change is recorded in the visit's audit trail (who did what, when).
 ## Two modes
 
 - **Single-device mode** (no configuration). Everything is saved in the browser, and you pick a desk when the app opens. Good for trying it out, or for a clinic that runs on one computer.
-- **Clinic mode** (Firebase configured). Every desk uses its own phone, tablet or PC and sees the same data live. Staff sign in with email and password, and an admin assigns each person a desk. The data is cached offline, so a short internet drop doesn't stop reception.
+- **Clinic mode** (Firebase configured). Every desk uses its own phone, tablet or PC and sees the same data live. Staff sign in with email and password, and an admin assigns each person a desk. The data is cached offline, so every desk keeps its list and its edits through a short internet drop, and changes sync when the connection is back. Registering a new patient does need a connection, because the day's token number is assigned on the server.
 
 ## Development
 
@@ -36,11 +36,11 @@ npm run lint     # lint
 
 ## Setting up clinic mode (Firebase)
 
-1. Create a Firebase project and add a **Web app** ([console](https://console.firebase.google.com/)).
+1. Create a **new** Firebase project for the clinic and add a **Web app** ([console](https://console.firebase.google.com/)).
 2. **Authentication → Sign-in method**: enable **Email/Password**.
 3. **Firestore Database**: create a database. Choose the `asia-south1` (Mumbai) region to keep patient data in India.
 4. Copy `.env.example` to `.env.local` and fill in the web app config values.
-5. Deploy the security rules and the app:
+5. Deploy the security rules and the app (run this from `opd/`; `opd/firestore.rules` replaces whatever rules the project had, so don't point it at the main app's project):
    ```bash
    npm run build
    npx firebase-tools deploy --only firestore:rules,hosting

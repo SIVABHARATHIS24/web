@@ -1,4 +1,4 @@
-import type { Patient, Role, Visit } from '../../types'
+import type { AuditEntry, Patient, Role, Visit } from '../../types'
 import { isFirebaseConfigured } from './config'
 import type { CloudCallbacks } from './types'
 
@@ -39,9 +39,9 @@ export async function cloudSignOut() {
 export async function cloudCreateVisit(visit: Omit<Visit, 'token'>, patient: Patient): Promise<Visit> {
   return (await loadClient()).createVisit(visit, patient)
 }
-export function cloudWriteVisit(visit: Visit) {
+export function cloudPatchVisit(id: string, patch: Partial<Visit>, entry: AuditEntry) {
   if (!isFirebaseConfigured) return
-  loadClient().then((c) => c.writeVisit(visit))
+  loadClient().then((c) => c.patchVisit(id, patch, entry))
 }
 export function cloudSetStaffRole(uid: string, role: Role | null) {
   if (!isFirebaseConfigured) return

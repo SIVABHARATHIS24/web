@@ -8,6 +8,7 @@ import {
   updateProfile,
 } from 'firebase/auth'
 import {
+  arrayUnion,
   collection,
   doc,
   initializeFirestore,
@@ -20,7 +21,7 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore'
-import type { Patient, Role, StaffMember, Visit } from '../../types'
+import type { AuditEntry, Patient, Role, StaffMember, Visit } from '../../types'
 import { firebaseConfig } from './config'
 import type { CloudCallbacks } from './types'
 
@@ -134,8 +135,10 @@ export async function createVisit(visit: Omit<Visit, 'token'>, patient: Patient)
   })
 }
 
-export function writeVisit(visit: Visit) {
-  void setDoc(doc(db, 'visits', visit.id), visit)
+// Writes only the fields this change touched and appends to the audit trail,
+// so two desks editing the same visit at once don't overwrite each other.
+export function patchVisit(id: string, patch: Partial<Visit>, entry: AuditEntry) {
+  void updateDoc(doc(db, 'visits', id), { ...patch, audit: arrayUnion(entry) })
 }
 
 export function setStaffRole(uid: string, role: Role | null) {

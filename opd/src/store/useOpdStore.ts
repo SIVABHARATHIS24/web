@@ -2,10 +2,10 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import {
   cloudCreateVisit,
+  cloudPatchVisit,
   cloudSetStaffRole,
   cloudSignOut,
   cloudWatchDate,
-  cloudWriteVisit,
   isFirebaseConfigured,
   startCloud,
   type CloudStatus,
@@ -82,21 +82,16 @@ export const useOpdStore = create<OpdState & OpdActions>()(
     (set, get) => {
       const actor = () => get().me?.name || get().staffName || get().role || 'staff'
 
-      const saveVisit = (visit: Visit) => {
-        set((s) => ({ visits: s.visits.map((v) => (v.id === visit.id ? visit : v)) }))
-        cloudWriteVisit(visit)
-      }
-
       const mutate = (id: string, fn: (v: Visit) => Partial<Visit>, action: string) => {
         const current = get().visits.find((v) => v.id === id)
         if (!current) return
         const at = now()
-        saveVisit({
-          ...current,
-          ...fn(current),
-          updatedAt: at,
-          audit: [...current.audit, { at, by: actor(), action }],
-        })
+        const patch: Partial<Visit> = { ...fn(current), updatedAt: at }
+        const entry = { at, by: actor(), action }
+        set((s) => ({
+          visits: s.visits.map((v) => (v.id === id ? { ...v, ...patch, audit: [...v.audit, entry] } : v)),
+        }))
+        cloudPatchVisit(id, patch, entry)
       }
 
       return {
