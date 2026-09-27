@@ -1,5 +1,6 @@
 import { initializeApp } from 'firebase/app'
 import {
+  connectAuthEmulator,
   createUserWithEmailAndPassword,
   getAuth,
   onAuthStateChanged,
@@ -9,6 +10,7 @@ import {
 } from 'firebase/auth'
 import {
   collection,
+  connectFirestoreEmulator,
   doc,
   initializeFirestore,
   onSnapshot,
@@ -30,6 +32,11 @@ const auth = getAuth(app)
 const db = initializeFirestore(app, {
   localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
 })
+// Local testing against `npm run emulators` instead of the real project.
+if (import.meta.env.VITE_USE_FIREBASE_EMULATOR === 'true') {
+  connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true })
+  connectFirestoreEmulator(db, '127.0.0.1', 8080)
+}
 
 let callbacks: CloudCallbacks | null = null
 let watchedDate = ''
