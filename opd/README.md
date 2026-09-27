@@ -34,6 +34,15 @@ npm run build    # production build
 npm run lint     # lint
 ```
 
+To try clinic mode without a real Firebase project, run the local Firebase emulators (needs Java) and point the app at them:
+
+```bash
+npm run emulators               # terminal 1: Auth + Firestore on this computer, using firestore.rules
+npx vite --mode emulator        # terminal 2: app with the settings in .env.emulator
+```
+
+Open the app in two browser windows (one normal, one private) to act as two desks. To make the first admin, follow step 6 below but edit the `staff` document in the emulator UI at http://127.0.0.1:4000/firestore instead of the Firebase console.
+
 ## Setting up clinic mode (Firebase)
 
 1. Create a **new** Firebase project for the clinic and add a **Web app** ([console](https://console.firebase.google.com/)).
