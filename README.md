@@ -2,6 +2,8 @@
 
 An installable AI companion app that remembers what matters to you and helps you track your growth over time — like a personal memory + growth journal, built together with an assistant.
 
+> This repo also contains **[OPD Clinic](opd/README.md)**, a separate out-patient clinic app in [`opd/`](opd/).
+
 ## Features
 
 - **Chat** — talk with your assistant. It picks up on things worth remembering ("I want to run a 5k", "Remember that I prefer mornings") and automatically saves them to your memory bank.

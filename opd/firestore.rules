@@ -1,0 +1,49 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function staff() {
+      return get(/databases/$(database)/documents/staff/$(request.auth.uid)).data;
+    }
+    function signedIn() {
+      return request.auth != null;
+    }
+    function hasRole(roles) {
+      return signedIn()
+        && exists(/databases/$(database)/documents/staff/$(request.auth.uid))
+        && staff().role in roles;
+    }
+    function anyDesk() {
+      return hasRole(['reception', 'doctor', 'investigations', 'pharmacy', 'admin']);
+    }
+
+    // Staff accounts. Anyone can create their own record, but only with no
+    // role — an admin assigns the desk. Only admins can change roles.
+    match /staff/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || hasRole(['admin']));
+      allow create: if signedIn() && request.auth.uid == uid
+        && request.resource.data.role == null
+        && request.resource.data.uid == uid;
+      allow update: if hasRole(['admin']) && uid != request.auth.uid;
+    }
+
+    match /patients/{id} {
+      allow read: if anyDesk();
+      allow create, update: if hasRole(['reception', 'doctor', 'admin']);
+    }
+
+    // Every desk moves a visit along its flow (doctor verifies, lab records
+    // results, pharmacy dispenses). Deleting records is not allowed; mark
+    // a visit "not coming" instead.
+    match /visits/{id} {
+      allow read: if anyDesk();
+      allow create: if hasRole(['reception', 'admin']);
+      allow update: if anyDesk();
+    }
+
+    // Per-day token counter used when registering a visit.
+    match /counters/{date} {
+      allow read, write: if hasRole(['reception', 'admin']);
+    }
+  }
+}
