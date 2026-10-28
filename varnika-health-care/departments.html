@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Departments — Varnika Health Care</title>
+  <meta name="description" content="Explore 16 specialities at Varnika Health Care — cardiology, orthopaedics, maternity, paediatrics, neurology, emergency care and more.">
+  <meta name="theme-color" content="#0f8b8d">
+  <link rel="icon" href="img/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <script>try{var t=localStorage.getItem("vhc-theme");if(t)document.documentElement.dataset.theme=JSON.parse(t)}catch(e){}</script>
+</head>
+<body data-page="departments">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div data-include="header"></div>
+
+  <main id="main">
+    <section class="page-hero">
+      <div class="container">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a> / <span>Departments</span></nav>
+        <h1>Our departments</h1>
+        <p>Sixteen specialities, one coordinated team. Tap any department to see its services and specialists.</p>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top:48px">
+      <div class="container">
+        <div class="toolbar">
+          <div class="search">
+            <svg class="ic" aria-hidden="true"><use href="#i-search"/></svg>
+            <label class="sr-only" for="dept-search">Search departments</label>
+            <input id="dept-search" type="search" placeholder="Search a speciality or treatment, e.g. “knee”, “cataract”">
+          </div>
+        </div>
+        <div class="chips" id="dept-filters" role="group" aria-label="Filter departments" style="margin:-12px 0 32px"></div>
+        <div class="grid grid-4" id="dept-grid"></div>
+      </div>
+    </section>
+
+    <section class="section alt">
+      <div class="container">
+        <div class="cta-band reveal">
+          <div>
+            <h2>Not sure which department you need?</h2>
+            <p>Tell us your symptoms and our help desk will guide you to the right specialist.</p>
+          </div>
+          <div class="btns">
+            <a class="btn btn-white" data-wa="Hello, I'm not sure which department I need. My symptoms are: " href="#" target="_blank" rel="noopener"><svg class="ic"><use href="#i-chat"/></svg> Ask on WhatsApp</a>
+            <a class="btn btn-outline-white" data-site="phone" href="tel:+919876543210">+91 98765 43210</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div data-include="footer"></div>
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

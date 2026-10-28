@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Book an Appointment — Varnika Health Care</title>
+  <meta name="description" content="Book a doctor's appointment at Varnika Health Care online — choose a department, doctor, date and time in under a minute.">
+  <meta name="theme-color" content="#0f8b8d">
+  <link rel="icon" href="img/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <script>try{var t=localStorage.getItem("vhc-theme");if(t)document.documentElement.dataset.theme=JSON.parse(t)}catch(e){}</script>
+</head>
+<body data-page="appointment">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div data-include="header"></div>
+
+  <main id="main">
+    <section class="page-hero" style="padding-bottom:40px">
+      <div class="container">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a> / <span>Book appointment</span></nav>
+        <h1>Book an appointment</h1>
+        <p>Five quick steps. For emergencies, please don't wait — call <a data-site="emergencyPhone" href="tel:+919876500108">+91 98765 00108</a> right away.</p>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top:24px">
+      <div class="container booking" id="booking">
+        <div class="card">
+          <ol class="steps" aria-label="Booking progress">
+            <li><span>Department</span></li>
+            <li><span>Doctor</span></li>
+            <li><span>Date &amp; time</span></li>
+            <li><span>Your details</span></li>
+            <li><span>Confirm</span></li>
+          </ol>
+
+          <!-- Step 1 -->
+          <div class="step-panel">
+            <h2>Which department do you need?</h2>
+            <p class="muted">Not sure? Choose <strong>General Medicine</strong> — our physicians will guide you.</p>
+            <div class="pick-grid" id="pick-dept"></div>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="step-panel">
+            <h2>Choose your doctor</h2>
+            <p class="muted" id="doc-step-sub"></p>
+            <div class="pick-grid docs" id="pick-doc"></div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="step-panel">
+            <h2>Pick a date &amp; time</h2>
+            <p class="muted">Only the days your doctor is available are shown. Greyed-out times are already booked.</p>
+            <div class="date-strip" id="date-strip"></div>
+            <div id="slot-wrap"></div>
+          </div>
+
+          <!-- Step 4 -->
+          <div class="step-panel">
+            <h2>Patient details</h2>
+            <p class="muted">We'll use these to confirm your appointment by phone or SMS.</p>
+            <form id="patient-form" novalidate>
+              <div class="form-grid">
+                <div class="field full">
+                  <label for="p-name">Full name <span class="req">*</span></label>
+                  <input id="p-name" name="name" autocomplete="name" data-validate="required">
+                  <span class="err">Please enter the patient's name.</span>
+                </div>
+                <div class="field">
+                  <label for="p-phone">Mobile number <span class="req">*</span></label>
+                  <input id="p-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="98765 43210" data-validate="required phone">
+                  <span class="err">Enter a valid 10-digit mobile number.</span>
+                </div>
+                <div class="field">
+                  <label for="p-email">Email <span class="muted">(optional)</span></label>
+                  <input id="p-email" name="email" type="email" autocomplete="email" data-validate="email">
+                  <span class="err">That email doesn't look right.</span>
+                </div>
+                <div class="field">
+                  <label for="p-age">Age <span class="req">*</span></label>
+                  <input id="p-age" name="age" type="number" min="0" max="120" inputmode="numeric" data-validate="age">
+                  <span class="err">Enter an age between 0 and 120.</span>
+                </div>
+                <div class="field">
+                  <span style="display:block;font-weight:700;font-size:.9rem;margin-bottom:6px">Gender <span class="req">*</span></span>
+                  <div class="radio-row">
+                    <label class="radio-pill"><input type="radio" name="gender" value="Female" checked><span>Female</span></label>
+                    <label class="radio-pill"><input type="radio" name="gender" value="Male"><span>Male</span></label>
+                    <label class="radio-pill"><input type="radio" name="gender" value="Other"><span>Other</span></label>
+                  </div>
+                </div>
+                <div class="field full">
+                  <span style="display:block;font-weight:700;font-size:.9rem;margin-bottom:6px">Visit type</span>
+                  <div class="radio-row">
+                    <label class="radio-pill"><input type="radio" name="visit" value="New patient" checked><span>New patient</span></label>
+                    <label class="radio-pill"><input type="radio" name="visit" value="Follow-up"><span>Follow-up</span></label>
+                    <label class="radio-pill"><input type="radio" name="visit" value="Video consultation"><span>Video consultation</span></label>
+                  </div>
+                </div>
+                <div class="field full">
+                  <label for="p-reason">Reason for visit <span class="muted">(optional)</span></label>
+                  <textarea id="p-reason" name="reason" placeholder="Briefly describe your symptoms or concern"></textarea>
+                </div>
+              </div>
+              <button type="submit" hidden></button>
+            </form>
+          </div>
+
+          <!-- Step 5 -->
+          <div class="step-panel">
+            <h2>Review &amp; confirm</h2>
+            <p class="muted">Please check everything is correct.</p>
+            <div class="review" id="review"></div>
+          </div>
+
+          <!-- Done -->
+          <div class="step-panel">
+            <div class="success">
+              <div class="success-icon"><svg class="ic"><use href="#i-check"/></svg></div>
+              <h2>Appointment requested!</h2>
+              <p class="muted" id="success-when"></p>
+              <div>Your reference number</div>
+              <div class="ref" id="success-ref"></div>
+              <p class="muted" style="max-width:520px;margin:0 auto 24px">Our front desk will call you to confirm. To get confirmed faster, send your booking to us on WhatsApp. Please arrive 15 minutes early and bring a photo ID and any previous reports.</p>
+              <div class="btns">
+                <a class="btn btn-primary" id="success-wa" href="#" target="_blank" rel="noopener"><svg class="ic"><use href="#i-chat"/></svg> Send on WhatsApp</a>
+                <button class="btn btn-ghost" type="button" id="success-ics"><svg class="ic"><use href="#i-download"/></svg> Add to calendar</button>
+                <button class="btn btn-ghost" type="button" id="success-print"><svg class="ic"><use href="#i-printer"/></svg> Print</button>
+                <button class="btn btn-ghost" type="button" id="book-another">Book another</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="wizard-nav">
+            <button class="btn btn-ghost" type="button" id="wiz-back"><svg class="ic"><use href="#i-arrow-left"/></svg> Back</button>
+            <button class="btn btn-primary" type="button" id="wiz-next">Continue</button>
+          </div>
+        </div>
+
+        <aside>
+          <div class="card summary">
+            <h3 style="margin-bottom:18px">Your appointment</h3>
+            <dl>
+              <div><dt>Department</dt><dd id="sum-dept"></dd></div>
+              <div><dt>Doctor</dt><dd id="sum-doc"></dd></div>
+              <div><dt>Date</dt><dd id="sum-date"></dd></div>
+              <div><dt>Time</dt><dd id="sum-time"></dd></div>
+              <div id="sum-pkg-row" hidden><dt>Health package</dt><dd id="sum-pkg"></dd></div>
+            </dl>
+            <hr style="border:0;border-top:1px solid var(--border);margin:22px 0">
+            <p class="muted" style="font-size:.9rem;margin-bottom:12px">Prefer to talk to someone?</p>
+            <a class="btn btn-ghost btn-block btn-sm" data-site="phone" href="tel:+919876543210">+91 98765 43210</a>
+
+            <div class="my-appts" hidden>
+              <hr style="border:0;border-top:1px solid var(--border);margin:22px 0 6px">
+              <h3 style="font-size:1rem;margin:14px 0 4px">Your upcoming visits</h3>
+              <small class="muted">Saved on this device</small>
+              <div id="my-appts"></div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <div data-include="footer"></div>
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
