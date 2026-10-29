@@ -20,6 +20,13 @@ window.SITE = {
   mapQuery: "Keeramangalam Bus Stand, Pudukkottai 614624",
   // Same hours every day of the week, including Sundays and holidays.
   hours: ["17:00", "21:00"],
+  // Online booking goes straight into the hospital's OPD software. This key is
+  // meant to be public: it can only send a booking request and see which times
+  // are full. It cannot read any patient data. Never put a secret key here.
+  booking: {
+    url: "https://mbafxbqexcwnrcxvkjux.supabase.co",
+    key: "sb_publishable_CFTNjU3Z4XcxqY7FyepqYg_sQdVCwSe",
+  },
   doctor: {
     name: "Dr. S. SIVABHARATHI",
     initials: "SS",

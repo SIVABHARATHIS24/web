@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /deploy/
+
+Sitemap: https://varnikahospital.in/sitemap.xml

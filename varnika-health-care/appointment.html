@@ -6,10 +6,21 @@
   <title>Book an Appointment — Varnika Speciality Hospital</title>
   <meta name="description" content="Request an appointment with Dr. S. SIVABHARATHI at Varnika Speciality Hospital. Open daily 5 PM – 9 PM, including Sundays and holidays.">
   <meta name="theme-color" content="#063f78">
+  <link rel="canonical" href="https://varnikahospital.in/appointment">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Varnika Speciality Hospital">
+  <meta property="og:title" content="Book an Appointment — Varnika Speciality Hospital">
+  <meta property="og:description" content="Request an appointment with Dr. S. SIVABHARATHI at Varnika Speciality Hospital. Open daily 5 PM – 9 PM, including Sundays and holidays.">
+  <meta property="og:url" content="https://varnikahospital.in/appointment">
+  <meta property="og:image" content="https://varnikahospital.in/img/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
   <link rel="icon" href="img/logo.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&family=Noto+Sans+Tamil:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body data-page="appointment">
@@ -37,6 +48,11 @@
               <li><i></i><span>Confirm</span></li>
             </ol>
 
+            <div class="notice" id="booking-closed" hidden>
+              <svg class="ic"><use href="#i-alert"/></svg>
+              <span>Online booking is closed just now. You can still send your request on WhatsApp, call <a data-tel href="tel:+919159998099">the hospital</a>, or walk in during clinic hours.</span>
+            </div>
+
             <div class="step-panel">
               <h2>What is the visit for?</h2>
               <div class="pick-grid" id="pick-reason"></div>
@@ -55,7 +71,7 @@
                 <div class="form-grid">
                   <div class="field full">
                     <label for="p-name">Patient's name <span class="req">*</span></label>
-                    <input class="input" id="p-name" name="name" autocomplete="name" data-validate="required">
+                    <input class="input" id="p-name" name="name" autocomplete="name" maxlength="100" data-validate="required">
                     <span class="err">Please enter the patient's name.</span>
                   </div>
                   <div class="field">
@@ -78,7 +94,7 @@
                   </div>
                   <div class="field full">
                     <label for="p-notes">Describe the problem <span class="muted">(optional)</span></label>
-                    <textarea class="input" id="p-notes" name="notes" placeholder="e.g. Fell from a bike yesterday, right wrist pain and swelling"></textarea>
+                    <textarea class="input" id="p-notes" name="notes" maxlength="1000" placeholder="e.g. Fell from a bike yesterday, right wrist pain and swelling"></textarea>
                   </div>
                 </div>
                 <button type="submit" hidden></button>
@@ -90,18 +106,19 @@
               <table class="kv review" id="review"></table>
               <div class="notice info" style="margin-top:16px">
                 <svg class="ic"><use href="#i-info"/></svg>
-                <span>This is a request for your preferred time. The clinic will confirm it by phone.</span>
+                <span>This is a request for your preferred time. The hospital will confirm it on WhatsApp or by phone.</span>
               </div>
             </div>
 
             <div class="step-panel">
               <div class="success">
                 <span class="orb green"><svg class="ic"><use href="#i-check"/></svg></span>
-                <h2>Request ready</h2>
+                <h2 id="success-title">Request ready</h2>
                 <p class="muted" id="success-when"></p>
                 <div>Reference number</div>
                 <div class="ref" id="success-ref"></div>
-                <p class="muted" style="max-width:500px;margin:0 auto 18px"><strong>Please send this request to the clinic on WhatsApp</strong> so we receive it. We'll confirm your time. Bring any earlier X-rays and reports.</p>
+                <p class="muted success-note" id="success-sent" hidden><strong>The hospital has received your request.</strong> Reception will confirm your time on WhatsApp or by phone. Please keep your phone with you.</p>
+                <p class="muted success-note" id="success-unsent"><strong>Please send this request to the hospital on WhatsApp</strong> so we receive it. We'll confirm your time.</p>
                 <div class="btn-row">
                   <a class="btn btn-green" id="success-wa" href="#" target="_blank" rel="noopener"><svg class="ic"><use href="#i-chat"/></svg> Send on WhatsApp</a>
                   <button class="btn" type="button" id="success-ics"><svg class="ic"><use href="#i-download"/></svg> Add to calendar</button>
@@ -109,6 +126,34 @@
                   <button class="btn" type="button" id="book-another">New request</button>
                 </div>
               </div>
+
+              <div class="visit-tips">
+                <section>
+                  <h3><svg class="ic"><use href="#i-clipboard"/></svg> Before you come</h3>
+                  <ol>
+                    <li>Please come <strong>10 minutes before your time</strong> for registration and vitals (BP, pulse, weight).</li>
+                    <li>Bring your <strong>old prescriptions, X-ray / MRI / CT films and reports</strong>, and the medicines you take now.</li>
+                    <li>For an injury, wear loose clothes. Do not remove a splint or plaster yourself.</li>
+                    <li>Your time is approximate: an emergency may cause a short delay. Please wait for your name to be called.</li>
+                    <li>If you cannot come, please call or WhatsApp the hospital so the time can be given to another patient.</li>
+                  </ol>
+                </section>
+                <section lang="ta" class="ta">
+                  <h3><svg class="ic"><use href="#i-clipboard"/></svg> வருவதற்கு முன்</h3>
+                  <ol>
+                    <li>பதிவு மற்றும் BP, நாடி, எடை பார்க்க உங்கள் நேரத்துக்கு <strong>10 நிமிடம் முன்பே</strong> வரவும்.</li>
+                    <li><strong>பழைய மருந்துச் சீட்டுகள், X-ray / MRI / CT பிலிம் மற்றும் ரிப்போர்ட்டுகள்</strong>, இப்போது சாப்பிடும் மருந்துகளை எடுத்து வரவும்.</li>
+                    <li>அடிபட்டிருந்தால் தளர்வான உடை அணியவும்; கட்டு அல்லது மாவுக்கட்டை நீங்களே அவிழ்க்க வேண்டாம்.</li>
+                    <li>நேரம் தோராயமானது: அவசர நோயாளி வந்தால் சிறிது தாமதம் ஆகலாம். பெயர் அழைக்கும் வரை காத்திருக்கவும்.</li>
+                    <li>வர முடியவில்லை என்றால் மருத்துவமனையை அழைக்கவும் அல்லது WhatsApp செய்யவும்; அந்த நேரத்தை வேறு நோயாளிக்கு தருவோம்.</li>
+                  </ol>
+                </section>
+              </div>
+            </div>
+
+            <div class="notice error" id="book-error" role="alert" hidden>
+              <svg class="ic"><use href="#i-alert"/></svg>
+              <span></span>
             </div>
 
             <div class="pane-foot wizard-nav">
@@ -145,6 +190,7 @@
 
   <div data-include="footer"></div>
   <script src="js/data.js"></script>
+  <script src="js/booking-api.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

@@ -392,8 +392,41 @@
     const prog = $$(".progress li", root);
     const back = $("#wiz-back"), next = $("#wiz-next"), nav = $(".wizard-nav", root);
     const form = $("#patient-form");
+    const errorBox = $("#book-error");
     liveClear(form);
     const reasonLabel = () => (REASONS.find((r) => r.id === state.reason) || {}).label;
+
+    // Online booking: requests go straight into the hospital's OPD software. Until the
+    // service answers (or when it is off or unreachable) the request is sent on WhatsApp.
+    const api = window.BookingAPI;
+    const service = { online: false, closed: false, lastDate: null };
+    const taken = {}; // date -> Set of "HH:MM" that are full or past
+    const useOnline = () => service.online && !service.closed;
+    if (api) {
+      api.options().then((o) => {
+        service.online = true;
+        service.closed = !o.accepting;
+        service.lastDate = o.last_date || null;
+        $("#booking-closed").hidden = !service.closed;
+        if (state.step === 1) renderDates();
+      }).catch(() => { service.online = false; });
+    }
+    function loadTaken(date) {
+      if (!useOnline()) return;
+      api.takenSlots(date).then((list) => {
+        taken[date] = new Set(Array.isArray(list) ? list : []);
+        if (state.date !== date) return;
+        if (state.time && taken[date].has(state.time)) state.time = null;
+        renderSlots();
+        next.disabled = !canNext();
+        renderSummary();
+      }).catch(() => { /* times just stay open; the booking itself is checked again */ });
+    }
+    function showError(msg) {
+      errorBox.hidden = !msg;
+      $("span", errorBox).textContent = msg || "";
+      if (msg) errorBox.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    }
 
     function renderReasons() {
       $("#pick-reason").innerHTML = REASONS.map((r) => `
@@ -407,6 +440,7 @@
       for (let i = 0; i < 14; i++) {
         const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() + i);
         const k = dateKey(d);
+        if (service.lastDate && k > service.lastDate) break;
         chips.push(`<button type="button" class="date-chip ${state.date === k ? "selected" : ""}" data-date="${k}" aria-pressed="${state.date === k}">
           <small>${i === 0 ? "Today" : DAY_SHORT[d.getDay()]}</small><strong>${d.getDate()}</strong><small>${MONTHS[d.getMonth()]}</small></button>`);
       }
@@ -420,12 +454,18 @@
       const isToday = dateKey(now) === state.date;
       const nowMin = now.getHours() * 60 + now.getMinutes();
       const times = slotTimes();
+      const full = taken[state.date] || new Set();
       const html = times.map((t) => {
         const past = isToday && toMin(t) <= nowMin;
-        return `<button type="button" class="slot ${state.time === t ? "selected" : ""}" data-time="${t}" ${past ? "disabled" : ""} aria-pressed="${state.time === t}">${fmtTime(t)}</button>`;
+        const isFull = !past && full.has(t);
+        return `<button type="button" class="slot ${state.time === t ? "selected" : ""}${isFull ? " taken" : ""}" data-time="${t}" ${past || isFull ? "disabled" : ""} aria-pressed="${state.time === t}"${isFull ? ' title="Fully booked"' : ""}>${fmtTime(t)}${isFull ? "<small>Full</small>" : ""}</button>`;
       }).join("");
       const allPast = isToday && times.every((t) => toMin(t) <= nowMin);
-      wrap.innerHTML = allPast ? `<p class="muted">Today's clinic hours are over. Please choose another day.</p>` : `<div class="slots">${html}</div>`;
+      const allFull = times.every((t) => (isToday && toMin(t) <= nowMin) || full.has(t));
+      wrap.innerHTML = allPast ? `<p class="muted">Today's clinic hours are over. Please choose another day.</p>`
+        : allFull ? `<p class="muted">Online booking for this day is full. Please choose another day, or just walk in during clinic hours.</p>`
+        : `<div class="slots">${html}</div>
+           <p class="slot-legend"><span class="key open"></span> Available <span class="key full"></span> Full <span class="key mine"></span> Your choice</p>`;
     }
     function renderSummary() {
       const rows = { "sum-reason": reasonLabel(), "sum-date": state.date && prettyDate(state.date), "sum-time": state.time && fmtTime(state.time) };
@@ -458,6 +498,7 @@
       next.className = state.step === 3 ? "btn btn-green" : "btn btn-primary";
       next.disabled = !canNext();
       nav.hidden = state.step === 4;
+      showError("");
       if (state.step === 0) renderReasons();
       if (state.step === 1) renderDates();
       if (state.step === 3) renderReview();
@@ -482,6 +523,7 @@
         state.time = null;
         $$(".date-chip", root).forEach((c) => { c.classList.toggle("selected", c === chip); c.setAttribute("aria-pressed", String(c === chip)); });
         renderSlots();
+        loadTaken(state.date);
         next.disabled = !canNext();
         renderSummary();
       } else if (slot && !slot.disabled) {
@@ -501,17 +543,71 @@
     });
     form.addEventListener("submit", (e) => { e.preventDefault(); next.click(); });
 
-    function confirm() {
+    const newRef = () => {
+      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+      const bytes = crypto.getRandomValues(new Uint8Array(6));
+      return "VHC-" + Array.from(bytes, (b) => chars[b % chars.length]).join("");
+    };
+    // Which wizard step / field to send the patient back to for each service error.
+    const FIELD_ERRORS = { bad_name: "p-name", bad_phone: "p-phone", bad_age: "p-age", bad_gender: null, bad_notes: "p-notes" };
+    const SLOT_ERRORS = ["bad_date", "bad_time", "slot_past", "slot_full", "day_full"];
+    let sending = false;
+
+    async function confirm() {
+      if (sending) return;
       const data = Object.fromEntries(new FormData(form));
-      const ref = "VHC-" + Date.now().toString(36).toUpperCase().slice(-6);
-      const appt = { ref, reason: reasonLabel(), date: state.date, time: state.time, name: data.name };
+      const appt = { ref: newRef(), reason: reasonLabel(), date: state.date, time: state.time, name: data.name.trim() };
+      if (!useOnline()) { finish(appt, data, false); return; }
+
+      sending = true;
+      next.disabled = back.disabled = true;
+      next.innerHTML = `<span class="spinner" aria-hidden="true"></span> Sending…`;
+      const send = () => api.book({
+        ref: appt.ref, reason: appt.reason, preferred_date: appt.date, preferred_time: appt.time,
+        patient_name: appt.name, phone: data.phone, age: parseInt(data.age, 10), gender: data.gender,
+        notes: (data.notes || "").trim() || null,
+      });
+      let r = null;
+      try {
+        r = await send();
+        if (r && r.ok === false && (r.error === "bad_ref" || r.error === "ref_taken")) { appt.ref = newRef(); r = await send(); }
+      } catch { r = null; }
+      sending = false;
+      back.disabled = false;
+      show();
+
+      // No answer, a broken answer, or booking switched off: send it on WhatsApp instead.
+      if (!r || typeof r.ok !== "boolean" || r.error === "closed") { finish(appt, data, false); return; }
+      if (r.ok) { finish(appt, data, true); return; }
+
+      if (r.error in FIELD_ERRORS) {
+        state.step = 2;
+        show();
+        const input = FIELD_ERRORS[r.error] && $("#" + FIELD_ERRORS[r.error]);
+        if (input) { input.closest(".field").classList.add("invalid"); input.setAttribute("aria-invalid", "true"); input.focus(); }
+      } else if (SLOT_ERRORS.includes(r.error)) {
+        delete taken[state.date];
+        state.time = null;
+        state.step = 1;
+        show();
+        loadTaken(state.date);
+      }
+      showError(r.message || "Sorry, the booking could not be made. Please call the hospital.");
+    }
+
+    // sent = the hospital's OPD software has the request; otherwise the patient sends it on WhatsApp.
+    function finish(appt, data, sent) {
       const all = store.get("vhc-appointments", []);
-      all.push(appt);
+      all.push({ ...appt, sent });
       store.set("vhc-appointments", all);
-      const msg = `Hello ${SITE.name}, I would like an appointment.\n\nRef: ${ref}\nPatient: ${data.name} (${data.age} yrs, ${data.gender})\nMobile: ${data.phone}\nReason: ${appt.reason}\nPreferred: ${prettyDate(state.date)} at ${fmtTime(state.time)}${data.notes ? "\nDetails: " + data.notes : ""}`;
-      $("#success-ref").textContent = ref;
-      $("#success-when").textContent = `${prettyDate(state.date)} at ${fmtTime(state.time)} · ${SITE.doctor.name}`;
+      const msg = `Hello ${SITE.name}, I would like an appointment.\n\nRef: ${appt.ref}\nPatient: ${appt.name} (${data.age} yrs, ${data.gender})\nMobile: ${data.phone}\nReason: ${appt.reason}\nPreferred: ${prettyDate(appt.date)} at ${fmtTime(appt.time)}${data.notes ? "\nDetails: " + data.notes : ""}`;
+      $("#success-title").textContent = sent ? "Booking request received" : "Request ready";
+      $("#success-sent").hidden = !sent;
+      $("#success-unsent").hidden = sent;
+      $("#success-ref").textContent = appt.ref;
+      $("#success-when").textContent = `${prettyDate(appt.date)} at ${fmtTime(appt.time)} · ${SITE.doctor.name}`;
       $("#success-wa").href = waHref(msg);
+      $("#success-wa").hidden = sent;
       $("#success-ics").onclick = () => downloadIcs(appt);
       state.step = 4;
       show();
@@ -532,7 +628,7 @@
       const list = store.get("vhc-appointments", []).filter((a) => a.date >= todayKey).sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
       $("#my-appts-box").hidden = !list.length;
       wrap.innerHTML = list.map((a) => `<div class="appt-row">
-        <div class="info"><strong>${prettyDate(a.date)} · ${fmtTime(a.time)}</strong><small>${escapeHtml(a.name)} · ${escapeHtml(a.reason)} · ${a.ref}</small></div>
+        <div class="info"><strong>${prettyDate(a.date)} · ${fmtTime(a.time)}</strong><small>${escapeHtml(a.name)} · ${escapeHtml(a.reason)} · ${escapeHtml(a.ref)}${a.sent ? " · sent to hospital" : ""}</small></div>
         <button class="btn icon-btn" type="button" data-cancel="${a.ref}" aria-label="Remove ${a.ref}">${icon("trash")}</button>
       </div>`).join("");
     }
