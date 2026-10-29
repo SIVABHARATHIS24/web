@@ -8,9 +8,8 @@
 window.SITE = {
   name: "Varnika Healthcare",
   type: "Orthopaedic Clinic",
-  // TODO: replace with the clinic's real phone and WhatsApp numbers.
-  phone: "+91 98765 43210",
-  whatsapp: "919876543210", // country code + number, digits only
+  phone: "+91 91599 98099",
+  whatsapp: "919159998099", // country code + number, digits only
   address: "No. 2, Annai Vaniha Valagam, Kiramangalam, Opposite to Bus Terminus, Alangudi Taluk, Pudukottai – 614 624",
   addressShort: "Opp. Bus Terminus, Kiramangalam, Alangudi Tk, Pudukottai",
   // Google Maps pin for the clinic, used by every "Get directions" button.

@@ -19,9 +19,8 @@ It is plain HTML, CSS and JavaScript with **no build step**. Open `index.html` i
 
 ## To do before publishing
 
-1. **Phone and WhatsApp number:** replace the placeholder `+91 98765 43210` in `js/data.js` (`phone` and `whatsapp`). The same placeholder also appears as fallback text in the HTML pages. The script replaces it, but update it there too.
-2. **Doctor photo:** save the photo as `img/doctor.jpg`. It appears automatically. Until then, the initials "SS" are shown.
-3. **Services list:** check `SERVICES` in `js/data.js` and add or remove items so it matches exactly what the clinic offers.
+1. **Doctor photo:** save the photo as `img/doctor.jpg`. It appears automatically. Until then, the initials "SS" are shown.
+2. **Services list:** check `SERVICES` in `js/data.js` and add or remove items so it matches exactly what the clinic offers.
 
 All clinic details (address, map link, timings, doctor and services) are in `js/data.js`.
 
