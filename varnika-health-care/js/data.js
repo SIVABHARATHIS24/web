@@ -13,6 +13,10 @@ window.SITE = {
   whatsapp: "919876543210", // country code + number, digits only
   address: "No. 2, Annai Vaniha Valagam, Kiramangalam, Opposite to Bus Terminus, Alangudi Taluk, Pudukottai – 614 624",
   addressShort: "Opp. Bus Terminus, Kiramangalam, Alangudi Tk, Pudukottai",
+  // Google Maps pin for the clinic, used by every "Get directions" button.
+  mapLink: "https://maps.app.goo.gl/VpykLbZAs5YMKypq6",
+  // Used for the embedded map on the Contact page. For an exact pin, replace
+  // with the clinic's coordinates, e.g. "10.4050,79.0500".
   mapQuery: "Keeramangalam Bus Stand, Pudukkottai 614624",
   // Same hours every day of the week, including Sundays and holidays.
   hours: ["17:00", "21:00"],

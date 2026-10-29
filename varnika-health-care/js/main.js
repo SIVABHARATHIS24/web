@@ -146,7 +146,7 @@
             <div>
               <h4>Visit us</h4>
               <ul class="footer-contact">
-                <li>${icon("pin")}<span>${SITE.address}</span></li>
+                <li>${icon("pin")}<span>${SITE.address}<br><a href="${SITE.mapLink}" target="_blank" rel="noopener">Open in Google Maps →</a></span></li>
                 <li>${icon("clock")}<span>Every day ${HOURS_TEXT}, including Sundays &amp; holidays</span></li>
                 <li>${icon("phone")}<a href="${telHref(SITE.phone)}">${SITE.phone}</a></li>
               </ul>
@@ -178,6 +178,7 @@
     $$("[data-hours]").forEach((el) => { el.textContent = HOURS_TEXT; });
     $$("[data-wa]").forEach((el) => { el.href = waHref(el.dataset.wa); });
     $$("[data-tel]").forEach((el) => { el.href = telHref(SITE.phone); });
+    $$("[data-directions]").forEach((a) => { a.href = SITE.mapLink; });
     // Doctor photo: show initials until img/doctor.jpg exists.
     $$("[data-photo]").forEach((el) => {
       el.textContent = SITE.doctor.initials;
@@ -322,7 +323,6 @@
     if (!map) return;
     map.innerHTML = `<iframe title="Map showing ${SITE.name}" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
       src="https://www.google.com/maps?q=${encodeURIComponent(SITE.mapQuery)}&output=embed"></iframe>`;
-    $$("[data-directions]").forEach((a) => { a.href = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(SITE.mapQuery); });
   }
 
   /* ---------------------------------------------------------------- Forms */

@@ -23,7 +23,11 @@ It is plain HTML, CSS and JavaScript with **no build step**. Open `index.html` i
 2. **Doctor photo:** save the photo as `img/doctor.jpg`. It appears automatically. Until then, the initials "SS" are shown.
 3. **Services list:** check `SERVICES` in `js/data.js` and add or remove items so it matches exactly what the clinic offers.
 
-All clinic details (address, timings, doctor and services) are in `js/data.js`.
+All clinic details (address, map link, timings, doctor and services) are in `js/data.js`.
+
+## Publishing on Oracle Cloud
+
+See [`deploy/ORACLE-CLOUD.md`](deploy/ORACLE-CLOUD.md) for step-by-step instructions. You create a free VM, point your domain to it, and run one setup script, which installs nginx and free HTTPS.
 
 ## Run locally
 
