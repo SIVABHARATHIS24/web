@@ -3,7 +3,9 @@
 Website for **Varnika Speciality Hospital**, Keeramangalam, Pudukottai — **varnikahospital.in**.
 Dr. S. SIVABHARATHI, MBBS, MS (Ortho), Consultant Orthopaedic Surgeon (Reg. No. 114118).
 
-The design uses a Windows Vista–style "Aero glass" theme: an aurora background, translucent blurred glass windows with title bars, glossy buttons and orb icons.
+The design matches the prescription: white pages, navy blue and golden yellow, and the running-man logo. Colour carries meaning (gold = book, green = open / available, red = full / emergency, and each kind of problem has its own colour), with gentle animations that switch off when the phone asks for reduced motion.
+
+**English and Tamil:** the தமிழ் / English button in the header switches every page, and the choice is remembered. Link straight to Tamil with `?lang=ta` (for example `https://varnikahospital.in/?lang=ta`). Page text is written in English in the HTML, with `data-i18n` keys; the Tamil is in `js/i18n.js`. Services, FAQs and hospital details in `js/data.js` carry both languages.
 
 It is plain HTML, CSS and JavaScript with **no build step**. Open `index.html` in a browser, or upload the folder to any static host (GitHub Pages, Netlify, Vercel, cPanel and others).
 
@@ -22,7 +24,7 @@ It is plain HTML, CSS and JavaScript with **no build step**. Open `index.html` i
 1. **Doctor photo:** save the photo as `img/doctor.jpg`. It appears automatically. Until then, the initials "SS" are shown.
 2. **Services list:** check `SERVICES` in `js/data.js` and add or remove items so it matches exactly what the clinic offers.
 
-All clinic details (address, map link, timings, doctor and services) are in `js/data.js`.
+All hospital details (address, map link, timings, doctor and services) are in `js/data.js`.
 
 ## Online booking
 

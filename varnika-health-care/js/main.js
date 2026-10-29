@@ -1,16 +1,17 @@
 /* ==========================================================================
    Varnika Speciality Hospital — site behaviour
-   Shared header/footer, icons, and the interactive widgets. Content lives
-   in data.js.
+   Shared header/footer, icons, the English / Tamil switch and the interactive
+   widgets. Content lives in data.js, Tamil text in i18n.js.
    ========================================================================== */
 (function () {
   "use strict";
 
   const SITE = window.SITE;
+  const I = window.I18N;
+  const t = (key, vars) => I.t(key, vars);
+  const L = (v) => I.L(v);
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
-  const DAY_SHORT = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-  const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
   const escapeHtml = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const telHref = (p) => "tel:" + p.replace(/[^\d+]/g, "");
@@ -64,6 +65,7 @@
     send: '<path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/>',
     clipboard: '<rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/>',
     clinic: '<path d="M3 21h18"/><path d="M5 21V8l7-5 7 5v13"/><path d="M10 21v-5h4v5"/><path d="M12 8v4"/><path d="M10 10h4"/>',
+    globe: '<circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>',
   };
   const icon = (name, cls = "") => `<svg class="ic ${cls}" aria-hidden="true"><use href="#i-${name}"/></svg>`;
 
@@ -87,17 +89,18 @@
 
   /* ---------------------------------------------------------------- Layout */
   const NAV = [
-    { href: "index.html", label: "Home", page: "home" },
-    { href: "about.html", label: "Doctor & Clinic", page: "about" },
-    { href: "services.html", label: "Services", page: "services" },
-    { href: "appointment.html", label: "Appointment", page: "appointment" },
-    { href: "contact.html", label: "Contact", page: "contact" },
+    { href: "index.html", key: "nav.home", label: ["Home", "முகப்பு"], page: "home" },
+    { href: "about.html", key: "nav.about", label: ["Doctor", "மருத்துவர்"], page: "about" },
+    { href: "services.html", key: "nav.services", label: ["Services", "சிகிச்சைகள்"], page: "services" },
+    { href: "appointment.html", key: "nav.book", label: ["Appointment", "முன்பதிவு"], page: "appointment" },
+    { href: "contact.html", key: "nav.contact", label: ["Contact", "தொடர்பு"], page: "contact" },
   ];
+  const navLabel = (n) => n.label[I.lang === "ta" ? 1 : 0];
 
-  function brandHtml() {
-    return `<a class="brand" href="index.html" aria-label="${SITE.name} home">
-      <img src="img/logo.svg" alt="" width="46" height="46">
-      <span class="brand-name">${SITE.name}<small>${SITE.type}</small></span>
+  function brandHtml(light) {
+    return `<a class="brand${light ? " light" : ""}" href="index.html" aria-label="${SITE.name}">
+      <img src="img/logo.svg" alt="" width="52" height="52">
+      <span class="brand-text"><span class="brand-name">Varnika <span>Speciality Hospital</span></span><span class="brand-tag">${L(SITE.tagline)}</span></span>
     </a>`;
   }
 
@@ -105,23 +108,25 @@
     const slot = $("[data-include='header']");
     if (!slot) return;
     const page = document.body.dataset.page;
-    slot.outerHTML = `
-      <div class="strip">
+    slot.innerHTML = `
+      <div class="topbar">
         <div class="container">
-          <span>${icon("clock")} Open daily ${HOURS_TEXT} · Sundays &amp; holidays too</span>
-          <span>${icon("pin")} ${SITE.addressShort}</span>
+          <span class="status-pill sm" data-open-status="short"></span>
+          <span class="tb-item hide-sm">${icon("pin")} ${L(SITE.addressShort)}</span>
+          <a class="tb-item" href="${telHref(SITE.phone)}">${icon("phone")} ${SITE.phone}</a>
         </div>
       </div>
       <header class="site-header">
         <div class="container">
-          ${brandHtml()}
+          ${brandHtml(false)}
           <nav class="nav" id="nav" aria-label="Main">
-            ${NAV.map((n) => `<a href="${n.href}"${n.page === page ? ' class="active" aria-current="page"' : ""}>${n.label}</a>`).join("")}
-            <a class="btn btn-green" href="${telHref(SITE.phone)}">${icon("phone")} Call ${SITE.phone}</a>
+            ${NAV.map((n) => `<a href="${n.href}"${n.page === page ? ' class="active" aria-current="page"' : ""}>${navLabel(n)}</a>`).join("")}
+            <a class="btn btn-gold nav-book" href="appointment.html">${icon("calendar")} ${I.lang === "ta" ? "முன்பதிவு செய்ய" : "Book appointment"}</a>
           </nav>
           <div class="header-actions">
-            <a class="btn btn-green btn-sm" href="${telHref(SITE.phone)}">${icon("phone")} ${SITE.phone}</a>
-            <button class="btn btn-glass menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav">${icon("menu")}</button>
+            <button class="lang-btn" type="button" data-lang-toggle aria-label="${t("switchLabel")}" lang="${I.lang === "ta" ? "en" : "ta"}">${icon("globe")}<span>${t("switchTo")}</span></button>
+            <a class="btn btn-gold btn-sm header-book" href="appointment.html">${icon("calendar")} <span>${I.lang === "ta" ? "முன்பதிவு" : "Book"}</span></a>
+            <button class="menu-toggle" type="button" aria-label="${t("menu")}" aria-expanded="false" aria-controls="nav">${icon("menu")}</button>
           </div>
         </div>
       </header>`;
@@ -131,60 +136,61 @@
     const slot = $("[data-include='footer']");
     if (!slot) return;
     const d = SITE.doctor;
-    slot.outerHTML = `
+    slot.innerHTML = `
       <footer class="site-footer">
         <div class="container">
           <div class="footer-grid">
             <div>
-              ${brandHtml()}
-              <p>${d.name}, ${d.quals}<br>${d.title}<br>Reg. No. ${d.reg}</p>
+              ${brandHtml(true)}
+              <p>${L(d.name)}, ${L(d.quals)}<br>${L(d.title)}<br>${I.lang === "ta" ? "பதிவு எண்" : "Reg. No."} ${d.reg}</p>
             </div>
             <div>
-              <h4>Pages</h4>
-              <ul>${NAV.map((n) => `<li><a href="${n.href}">${n.label}</a></li>`).join("")}</ul>
+              <h4>${t("pages")}</h4>
+              <ul>${NAV.map((n) => `<li><a href="${n.href}">${navLabel(n)}</a></li>`).join("")}</ul>
             </div>
             <div>
-              <h4>Visit us</h4>
+              <h4>${t("visitUs")}</h4>
               <ul class="footer-contact">
-                <li>${icon("pin")}<span>${SITE.address}<br><a href="${SITE.mapLink}" target="_blank" rel="noopener">Open in Google Maps →</a></span></li>
-                <li>${icon("clock")}<span>Every day ${HOURS_TEXT}, including Sundays &amp; holidays</span></li>
+                <li>${icon("pin")}<span>${L(SITE.address)}<br><a href="${SITE.mapLink}" target="_blank" rel="noopener">${t("openMaps")}</a></span></li>
+                <li>${icon("clock")}<span>${t("everyDayHours", { h: HOURS_TEXT })}</span></li>
                 <li>${icon("phone")}<a href="${telHref(SITE.phone)}">${SITE.phone}</a></li>
               </ul>
             </div>
           </div>
           <div class="footer-bottom">
-            <span>© ${new Date().getFullYear()} ${SITE.name} — ${SITE.type}</span>
-            <span>Not a 24-hour emergency service. In an emergency, call 108.</span>
+            <span>© ${new Date().getFullYear()} ${SITE.name} · ${SITE.domain}</span>
+            <span>${t("notEmergency")}</span>
           </div>
         </div>
       </footer>
       <div class="fab-wrap">
-        <button class="fab top" type="button" aria-label="Back to top">${icon("arrow-up")}</button>
-        <a class="fab wa" href="${waHref("Hello Varnika Speciality Hospital, I have a query.")}" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">${icon("chat")}</a>
-        <a class="fab call" href="${telHref(SITE.phone)}" aria-label="Call the clinic">${icon("phone")}</a>
+        <button class="fab top" type="button" aria-label="${t("backTop")}">${icon("arrow-up")}</button>
+        <a class="fab wa" href="${waHref(t("waHello"))}" target="_blank" rel="noopener" aria-label="${t("chatWa")}">${icon("chat")}</a>
+        <a class="fab call" href="${telHref(SITE.phone)}" aria-label="${t("callUs")}">${icon("phone")}</a>
       </div>
-      <div class="toast glass" role="status" aria-live="polite"></div>`;
+      <div class="toast" role="status" aria-live="polite"></div>`;
   }
 
   // Fill [data-site="key"] / [data-doctor="key"] elements from SITE so details live in one place.
   function fillSiteData() {
     $$("[data-site]").forEach((el) => {
-      const v = SITE[el.dataset.site];
+      const v = L(SITE[el.dataset.site]);
       if (v == null) return;
       el.textContent = v;
-      if (el.tagName === "A" && el.dataset.site === "phone") el.href = telHref(v);
     });
-    $$("[data-doctor]").forEach((el) => { el.textContent = SITE.doctor[el.dataset.doctor]; });
+    $$("[data-doctor]").forEach((el) => { el.textContent = L(SITE.doctor[el.dataset.doctor]); });
     $$("[data-hours]").forEach((el) => { el.textContent = HOURS_TEXT; });
-    $$("[data-wa]").forEach((el) => { el.href = waHref(el.dataset.wa); });
+    $$("[data-wa]").forEach((el) => { el.href = waHref(t("waHello")); });
     $$("[data-tel]").forEach((el) => { el.href = telHref(SITE.phone); });
     $$("[data-directions]").forEach((a) => { a.href = SITE.mapLink; });
+    $$("[data-email]").forEach((a) => { a.href = "mailto:" + SITE.email; a.textContent = SITE.email; });
     // Doctor photo: show initials until img/doctor.jpg exists.
-    $$("[data-photo]").forEach((el) => {
+    $$("[data-photo]:not([data-ready])").forEach((el) => {
+      el.dataset.ready = "1";
       el.textContent = SITE.doctor.initials;
       const img = new Image();
-      img.alt = SITE.doctor.name;
-      img.onload = () => el.appendChild(img);
+      img.alt = L(SITE.doctor.name);
+      img.onload = () => { el.textContent = ""; el.appendChild(img); el.classList.add("has-img"); };
       img.src = SITE.doctor.photo;
     });
   }
@@ -200,76 +206,93 @@
   }
 
   /* ---------------------------------------------------------------- Global UI */
-  function initHeader() {
-    const nav = $("#nav");
-    const toggle = $(".menu-toggle");
-    const topBtn = $(".fab.top");
-    const onScroll = () => topBtn && topBtn.classList.toggle("show", window.scrollY > 600);
+  // One set of listeners on the document, so they survive the header/footer being re-drawn.
+  function initGlobal() {
+    const setMenu = (open) => {
+      const nav = $("#nav"), toggle = $(".menu-toggle");
+      if (!nav || !toggle) return;
+      nav.classList.toggle("open", open);
+      document.body.classList.toggle("menu-open", open);
+      toggle.setAttribute("aria-expanded", String(open));
+      toggle.innerHTML = icon(open ? "x" : "menu");
+    };
+    document.addEventListener("click", (e) => {
+      if (e.target.closest(".menu-toggle")) { setMenu(!$("#nav").classList.contains("open")); return; }
+      if (e.target.closest("#nav a")) setMenu(false);
+      if (e.target.closest("[data-lang-toggle]")) {
+        I.set(I.lang === "ta" ? "en" : "ta");
+        renderAll();
+        return;
+      }
+      if (e.target.closest(".fab.top")) window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") setMenu(false); });
+    const onScroll = () => {
+      const y = window.scrollY;
+      const top = $(".fab.top");
+      top && top.classList.toggle("show", y > 600);
+      document.body.classList.toggle("scrolled", y > 10);
+    };
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
-    topBtn && topBtn.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
-    if (toggle && nav) {
-      const setOpen = (open) => {
-        nav.classList.toggle("open", open);
-        toggle.setAttribute("aria-expanded", String(open));
-        toggle.innerHTML = icon(open ? "x" : "menu");
-      };
-      toggle.addEventListener("click", () => setOpen(!nav.classList.contains("open")));
-      nav.addEventListener("click", (e) => { if (e.target.closest("a")) setOpen(false); });
-      document.addEventListener("keydown", (e) => { if (e.key === "Escape") setOpen(false); });
-    }
   }
 
+  let revealer = null;
   function initReveal() {
-    const els = $$(".reveal");
+    const els = $$(".reveal:not(.in)");
     if (!("IntersectionObserver" in window)) { els.forEach((el) => el.classList.add("in")); return; }
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((en) => { if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); } });
-    }, { threshold: 0.1, rootMargin: "0px 0px -30px 0px" });
-    els.forEach((el) => io.observe(el));
+    revealer = revealer || new IntersectionObserver((entries) => {
+      entries.forEach((en) => { if (en.isIntersecting) { en.target.classList.add("in"); revealer.unobserve(en.target); } });
+    }, { threshold: 0.12, rootMargin: "0px 0px -30px 0px" });
+    // Stagger cards that sit side by side.
+    els.forEach((el) => {
+      const siblings = el.parentElement ? $$(":scope > .reveal", el.parentElement) : [el];
+      el.style.setProperty("--delay", `${Math.min(siblings.indexOf(el), 5) * 80}ms`);
+      revealer.observe(el);
+    });
   }
 
-  function initOpenStatus() {
+  function renderOpenStatus() {
+    const open = isOpenNow();
     $$("[data-open-status]").forEach((el) => {
-      const open = isOpenNow();
       el.classList.toggle("closed", !open);
-      el.innerHTML = `<span class="dot"></span> ${open ? `Open now · until ${fmtTime(SITE.hours[1])}` : `Closed now · opens ${fmtTime(SITE.hours[0])}`}`;
+      const short = el.dataset.openStatus === "short";
+      el.innerHTML = `<span class="dot"></span> ${open ? t(short ? "openShort" : "openNow", { t: fmtTime(SITE.hours[1]) }) : t(short ? "closedShort" : "closedNow", { t: fmtTime(SITE.hours[0]) })}`;
     });
-    const table = $("#hours-table");
-    if (table) {
+    $$("[data-hours-table]").forEach((table) => {
       const today = new Date().getDay();
-      const order = [1, 2, 3, 4, 5, 6, 0];
-      const names = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-      table.innerHTML = order.map((d) => `<tr class="${d === today ? "today" : ""}"><th>${names[d]}${d === today ? " (today)" : ""}</th><td>${HOURS_TEXT}</td></tr>`).join("")
-        + `<tr><th>Public holidays</th><td>${HOURS_TEXT}</td></tr>`;
-    }
+      table.innerHTML = [1, 2, 3, 4, 5, 6, 0].map((d) => `<tr class="${d === today ? "today" : ""}"><th>${I.dayLong(d)}${d === today ? t("todayMark") : ""}</th><td>${HOURS_TEXT}</td></tr>`).join("")
+        + `<tr><th>${t("holidays")}</th><td>${HOURS_TEXT}</td></tr>`;
+    });
   }
 
   /* ---------------------------------------------------------------- Facilities & services */
+  const renderers = []; // re-run when the language changes
+
   function initFacilities() {
     const wrap = $("#facility-grid");
     if (!wrap) return;
-    wrap.innerHTML = window.FACILITIES.map((f) => `
-      <div class="glass tile reveal">
-        <span class="orb green">${icon(f.icon)}</span>
-        <h3>${f.title}</h3>
-        <p>${f.text}</p>
-      </div>`).join("");
+    const render = () => {
+      wrap.innerHTML = window.FACILITIES.map((f) => `
+        <div class="feature c-${f.color} reveal">
+          <span class="feature-icon">${icon(f.icon)}</span>
+          <h3>${L(f.title)}</h3>
+          <p>${L(f.text)}</p>
+        </div>`).join("");
+    };
+    render();
+    renderers.push(() => { render(); $$(".reveal", wrap).forEach((el) => el.classList.add("in")); });
   }
 
-  const WHERE = {
-    clinic: `<span class="chip-tag clinic">${icon("clinic")} At the clinic</span>`,
-    hospital: `<span class="chip-tag hospital">${icon("hospital")} Surgery at nearby hospital</span>`,
-  };
+  const groupOf = (id) => window.SERVICE_GROUPS.find((g) => g.id === id);
   function serviceCard(s) {
-    return `<article class="glass win svc reveal">
-      <div class="win-title">${icon(s.icon)}<span>${window.SERVICE_GROUPS.find((g) => g.id === s.group).name}</span></div>
-      <div class="pane">
-        <div class="svc-head"><span class="orb sm">${icon(s.icon)}</span><h3>${s.title}</h3></div>
-        <p>${s.text}</p>
-        <ul class="ticks">${s.items.map((i) => `<li>${icon("check")}<span>${i}</span></li>`).join("")}</ul>
-        <div class="where">${s.where.map((w) => WHERE[w]).join("")}</div>
-      </div>
+    const g = groupOf(s.group);
+    const where = { here: `<span class="chip here">${icon("clinic")} ${t("atHere")}</span>`, hospital: `<span class="chip away">${icon("hospital")} ${t("atHospital")}</span>` };
+    return `<article class="svc c-${g.color} reveal">
+      <div class="svc-head"><span class="svc-icon">${icon(s.icon)}</span><div><span class="svc-group">${L(g.name)}</span><h3>${L(s.title)}</h3></div></div>
+      <p>${L(s.text)}</p>
+      <ul class="ticks">${L(s.items).map((i) => `<li>${icon("check")}<span>${i}</span></li>`).join("")}</ul>
+      <div class="where">${s.where.map((w) => where[w]).join("")}</div>
     </article>`;
   }
 
@@ -282,40 +305,51 @@
     let group = new URLSearchParams(location.search).get("group") || "all";
     if (!window.SERVICE_GROUPS.some((g) => g.id === group)) group = "all";
 
-    const render = () => {
+    const render = (animate) => {
       const q = search ? search.value.trim().toLowerCase() : "";
       let list = window.SERVICES.filter((s) => (group === "all" || s.group === group)
-        && (!q || [s.title, s.text, ...s.items].join(" ").toLowerCase().includes(q)));
+        && (!q || [s.title.en, s.title.ta, s.text.en, s.text.ta, ...s.items.en, ...s.items.ta].join(" ").toLowerCase().includes(q)));
       if (limit) list = list.slice(0, limit);
       grid.innerHTML = list.length ? list.map(serviceCard).join("")
-        : `<div class="empty">No matching service found for “${escapeHtml(q)}”. Please <a href="contact.html">contact us</a> — we treat all bone and joint problems.</div>`;
-      $$(".reveal", grid).forEach((el) => el.classList.add("in"));
+        : `<div class="empty">${t("noService", { q: escapeHtml(q) })}</div>`;
+      if (!animate) $$(".reveal", grid).forEach((el) => el.classList.add("in"));
+    };
+    const renderTabs = () => {
+      if (!tabs) return;
+      tabs.innerHTML = window.SERVICE_GROUPS.map((g) => `<button class="tab c-${g.color}" type="button" data-group="${g.id}" aria-pressed="${g.id === group}">${L(g.name)}</button>`).join("");
     };
     if (tabs) {
-      tabs.innerHTML = window.SERVICE_GROUPS.map((g) => `<button class="tab" type="button" data-group="${g.id}" aria-pressed="${g.id === group}">${g.name}</button>`).join("");
       tabs.addEventListener("click", (e) => {
         const b = e.target.closest("[data-group]");
         if (!b) return;
         group = b.dataset.group;
-        $$(".tab", tabs).forEach((t) => t.setAttribute("aria-pressed", String(t === b)));
-        render();
+        $$(".tab", tabs).forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+        render(false);
       });
     }
-    search && search.addEventListener("input", render);
-    render();
+    search && search.addEventListener("input", () => render(false));
+    renderTabs();
+    render(true);
+    renderers.push(() => { renderTabs(); render(false); });
   }
 
   function initFaq() {
     const root = $("#faq-list");
     if (!root) return;
-    root.innerHTML = window.FAQS.map((f, i) => `
-      <details class="glass reveal"${i === 0 ? " open" : ""}>
-        <summary>${f.q}${icon("chevron-down")}</summary>
-        <div class="pane">${f.a}</div>
-      </details>`).join("");
+    const render = () => {
+      const open = $$("details", root).findIndex((d) => d.open);
+      root.innerHTML = window.FAQS.map((f, i) => `
+        <details class="reveal${root.dataset.drawn ? " in" : ""}"${i === (open < 0 && !root.dataset.drawn ? 0 : open) ? " open" : ""}>
+          <summary>${L(f.q)}${icon("chevron-down")}</summary>
+          <div class="faq-a">${L(f.a).replace(/\{hours\}/g, HOURS_TEXT)}</div>
+        </details>`).join("");
+      root.dataset.drawn = "1";
+    };
+    render();
     root.addEventListener("toggle", (e) => {
       if (e.target.open) $$("details", root).forEach((d) => { if (d !== e.target) d.open = false; });
     }, true);
+    renderers.push(render);
   }
 
   function initMap() {
@@ -328,7 +362,7 @@
   /* ---------------------------------------------------------------- Forms */
   const VALIDATORS = {
     required: (v) => v.trim().length > 0,
-    phone: (v) => /^(\+?91[\s-]?)?[6-9]\d{9}$/.test(v.replace(/[\s-]/g, "")),
+    phone: (v) => /^(\+?91[\s-]?|0)?[6-9]\d{9}$/.test(v.replace(/[\s-]/g, "")),
     age: (v) => v !== "" && +v >= 0 && +v <= 120,
   };
   function validateFields(fields) {
@@ -359,25 +393,29 @@
       const data = Object.fromEntries(new FormData(form));
       const msg = `Hello ${SITE.name},\n\nName: ${data.name}\nPhone: ${data.phone}\nTopic: ${data.topic}\n\n${data.message}`;
       window.open(waHref(msg), "_blank", "noopener");
-      toast("Opening WhatsApp to send your message…");
+      toast(t("waOpening"));
     });
   }
 
   /* ---------------------------------------------------------------- Appointment */
+  // label[0] (English) is what reception sees in the OPD app.
   const REASONS = [
-    { id: "injury", icon: "bandage", label: "Fracture or injury", hint: "Fall, accident, sprain" },
-    { id: "joint", icon: "bone", label: "Joint pain", hint: "Knee, hip, shoulder…" },
-    { id: "spine", icon: "spine", label: "Back or neck pain", hint: "Including sciatica" },
-    { id: "child", icon: "baby", label: "Child's bone problem", hint: "Clubfoot, bow legs, limp…" },
-    { id: "sports", icon: "dumbbell", label: "Sports injury", hint: "Ligament, meniscus" },
-    { id: "hand-foot", icon: "hand", label: "Hand, wrist or foot", hint: "Numbness, heel pain…" },
-    { id: "followup", icon: "calendar", label: "Follow-up / plaster check", hint: "Review after treatment" },
-    { id: "tests", icon: "scan", label: "X-ray, ECG or lab test", hint: "Investigations only" },
-    { id: "other", icon: "stethoscope", label: "Other", hint: "Describe in the next step" },
+    { id: "injury", icon: "bandage", color: "orange", label: ["Fracture or injury", "எலும்பு முறிவு / காயம்"], hint: ["Fall, accident, sprain", "விழுதல், விபத்து, சுளுக்கு"] },
+    { id: "joint", icon: "bone", color: "blue", label: ["Joint pain", "மூட்டு வலி"], hint: ["Knee, hip, shoulder…", "முழங்கால், இடுப்பு, தோள்…"] },
+    { id: "spine", icon: "spine", color: "purple", label: ["Back or neck pain", "முதுகு / கழுத்து வலி"], hint: ["Including sciatica", "சியாட்டிகா உட்பட"] },
+    { id: "child", icon: "baby", color: "pink", label: ["Child's bone problem", "குழந்தையின் எலும்புப் பிரச்சனை"], hint: ["Clubfoot, bow legs, limp…", "கோணல் பாதம், வளைந்த கால்…"] },
+    { id: "sports", icon: "dumbbell", color: "green", label: ["Sports injury", "விளையாட்டுக் காயம்"], hint: ["Ligament, meniscus", "தசைநார், மெனிஸ்கஸ்"] },
+    { id: "hand-foot", icon: "hand", color: "teal", label: ["Hand, wrist or foot", "கை, மணிக்கட்டு / பாதம்"], hint: ["Numbness, heel pain…", "மரத்துப்போதல், குதிகால் வலி…"] },
+    { id: "followup", icon: "calendar", color: "navy", label: ["Follow-up / plaster check", "மறுபரிசோதனை / மாவுக்கட்டு"], hint: ["Review after treatment", "சிகிச்சைக்குப் பின்"] },
+    { id: "tests", icon: "scan", color: "red", label: ["X-ray, ECG or lab test", "எக்ஸ்-ரே, ECG / லேப்"], hint: ["Investigations only", "பரிசோதனை மட்டும்"] },
+    { id: "other", icon: "stethoscope", color: "gold", label: ["Other", "மற்றவை"], hint: ["Describe in the next step", "அடுத்த படியில் விவரிக்கவும்"] },
   ];
+  const li = () => (I.lang === "ta" ? 1 : 0);
   const dateKey = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
   const parseKey = (k) => { const [y, m, d] = k.split("-").map(Number); return new Date(y, m - 1, d); };
-  const prettyDate = (k) => { const d = parseKey(k); return `${DAY_SHORT[d.getDay()]}, ${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`; };
+  const prettyDate = (k) => { const d = parseKey(k); return `${I.day(d.getDay())}, ${d.getDate()} ${I.month(d.getMonth())} ${d.getFullYear()}`; };
+  // For messages to the hospital: always English.
+  const prettyDateEn = (k) => { const d = parseKey(k); return d.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", year: "numeric" }); };
   const slotTimes = () => {
     const out = [];
     for (let m = toMin(SITE.hours[0]); m < toMin(SITE.hours[1]); m += 15) out.push(`${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`);
@@ -394,7 +432,8 @@
     const form = $("#patient-form");
     const errorBox = $("#book-error");
     liveClear(form);
-    const reasonLabel = () => (REASONS.find((r) => r.id === state.reason) || {}).label;
+    const reason = () => REASONS.find((r) => r.id === state.reason);
+    const reasonLabel = () => (reason() ? reason().label[li()] : "");
 
     // Online booking: requests go straight into the hospital's OPD software. Until the
     // service answers (or when it is off or unreachable) the request is sent on WhatsApp.
@@ -430,8 +469,8 @@
 
     function renderReasons() {
       $("#pick-reason").innerHTML = REASONS.map((r) => `
-        <button type="button" class="pick" data-id="${r.id}" aria-pressed="${state.reason === r.id}">
-          <span class="orb sm">${icon(r.icon)}</span><span><strong>${r.label}</strong><small>${r.hint}</small></span>
+        <button type="button" class="pick c-${r.color}" data-id="${r.id}" aria-pressed="${state.reason === r.id}">
+          <span class="pick-icon">${icon(r.icon)}</span><span><strong>${r.label[li()]}</strong><small>${r.hint[li()]}</small></span>
         </button>`).join("");
     }
     function renderDates() {
@@ -442,49 +481,50 @@
         const k = dateKey(d);
         if (service.lastDate && k > service.lastDate) break;
         chips.push(`<button type="button" class="date-chip ${state.date === k ? "selected" : ""}" data-date="${k}" aria-pressed="${state.date === k}">
-          <small>${i === 0 ? "Today" : DAY_SHORT[d.getDay()]}</small><strong>${d.getDate()}</strong><small>${MONTHS[d.getMonth()]}</small></button>`);
+          <small>${i === 0 ? t("today") : I.day(d.getDay())}</small><strong>${d.getDate()}</strong><small>${I.month(d.getMonth())}</small></button>`);
       }
       $("#date-strip").innerHTML = chips.join("");
       renderSlots();
     }
     function renderSlots() {
       const wrap = $("#slot-wrap");
-      if (!state.date) { wrap.innerHTML = `<p class="muted">Pick a date to see times.</p>`; return; }
+      if (!state.date) { wrap.innerHTML = `<p class="muted pick-hint">${t("pickDate")}</p>`; return; }
       const now = new Date();
       const isToday = dateKey(now) === state.date;
       const nowMin = now.getHours() * 60 + now.getMinutes();
       const times = slotTimes();
       const full = taken[state.date] || new Set();
-      const html = times.map((t) => {
-        const past = isToday && toMin(t) <= nowMin;
-        const isFull = !past && full.has(t);
-        return `<button type="button" class="slot ${state.time === t ? "selected" : ""}${isFull ? " taken" : ""}" data-time="${t}" ${past || isFull ? "disabled" : ""} aria-pressed="${state.time === t}"${isFull ? ' title="Fully booked"' : ""}>${fmtTime(t)}${isFull ? "<small>Full</small>" : ""}</button>`;
+      const html = times.map((x) => {
+        const past = isToday && toMin(x) <= nowMin;
+        const isFull = !past && full.has(x);
+        return `<button type="button" class="slot ${state.time === x ? "selected" : ""}${isFull ? " taken" : ""}" data-time="${x}" ${past || isFull ? "disabled" : ""} aria-pressed="${state.time === x}"${isFull ? ` title="${t("fullTitle")}"` : ""}>${fmtTime(x)}${isFull ? `<small>${t("full")}</small>` : ""}</button>`;
       }).join("");
-      const allPast = isToday && times.every((t) => toMin(t) <= nowMin);
-      const allFull = times.every((t) => (isToday && toMin(t) <= nowMin) || full.has(t));
-      wrap.innerHTML = allPast ? `<p class="muted">Today's clinic hours are over. Please choose another day.</p>`
-        : allFull ? `<p class="muted">Online booking for this day is full. Please choose another day, or just walk in during clinic hours.</p>`
+      const allPast = isToday && times.every((x) => toMin(x) <= nowMin);
+      const allFull = times.every((x) => (isToday && toMin(x) <= nowMin) || full.has(x));
+      wrap.innerHTML = allPast ? `<p class="muted pick-hint">${t("hoursOver")}</p>`
+        : allFull ? `<p class="muted pick-hint">${t("dayFull")}</p>`
         : `<div class="slots">${html}</div>
-           <p class="slot-legend"><span class="key open"></span> Available <span class="key full"></span> Full <span class="key mine"></span> Your choice</p>`;
+           <p class="slot-legend"><span class="key open"></span> ${t("available")} <span class="key full"></span> ${t("full")} <span class="key mine"></span> ${t("yourChoice")}</p>`;
     }
     function renderSummary() {
       const rows = { "sum-reason": reasonLabel(), "sum-date": state.date && prettyDate(state.date), "sum-time": state.time && fmtTime(state.time) };
       Object.entries(rows).forEach(([id, v]) => {
         const el = $("#" + id);
-        el.textContent = v || "Not selected";
+        el.textContent = v || t("notSelected");
         el.classList.toggle("empty-val", !v);
       });
     }
+    const genderLabel = (g) => ({ Female: ["Female", "பெண்"], Male: ["Male", "ஆண்"], Other: ["Other", "மற்றவர்"] }[g] || [g, g])[li()];
     function renderReview() {
       const data = Object.fromEntries(new FormData(form));
       const rows = [
-        ["Reason", reasonLabel()],
-        ["Doctor", `${SITE.doctor.name} (${SITE.doctor.title})`],
-        ["Date", prettyDate(state.date)],
-        ["Time", fmtTime(state.time)],
-        ["Patient", `${data.name}, ${data.age} yrs, ${data.gender}`],
-        ["Mobile", data.phone],
-        ...(data.notes ? [["Details", data.notes]] : []),
+        [t("rReason"), reasonLabel()],
+        [t("rDoctor"), `${L(SITE.doctor.name)} (${L(SITE.doctor.title)})`],
+        [t("rDate"), prettyDate(state.date)],
+        [t("rTime"), fmtTime(state.time)],
+        [t("rPatient"), `${data.name}, ${t("yrs", { n: data.age })}, ${genderLabel(data.gender)}`],
+        [t("rMobile"), data.phone],
+        ...(data.notes ? [[t("rDetails"), data.notes]] : []),
       ];
       $("#review").innerHTML = `<tbody>${rows.map(([k, v]) => `<tr><th>${k}</th><td>${escapeHtml(v)}</td></tr>`).join("")}</tbody>`;
     }
@@ -492,10 +532,10 @@
 
     function show() {
       panels.forEach((p, i) => p.classList.toggle("active", i === state.step));
-      prog.forEach((li, i) => { li.classList.toggle("done", i < state.step); li.classList.toggle("current", i === state.step); });
+      prog.forEach((el, i) => { el.classList.toggle("done", i < state.step); el.classList.toggle("current", i === state.step); });
       back.style.visibility = state.step === 0 ? "hidden" : "visible";
-      next.innerHTML = state.step === 3 ? `${icon("check")} Confirm` : `Next ${icon("arrow")}`;
-      next.className = state.step === 3 ? "btn btn-green" : "btn btn-primary";
+      next.innerHTML = state.step === 3 ? `${icon("check")} ${t("confirm")}` : `${t("next")} ${icon("arrow")}`;
+      next.className = state.step === 3 ? "btn btn-gold" : "btn btn-navy";
       next.disabled = !canNext();
       nav.hidden = state.step === 4;
       showError("");
@@ -510,14 +550,14 @@
     }
 
     root.addEventListener("click", (e) => {
-      const reason = e.target.closest("#pick-reason .pick");
+      const pick = e.target.closest("#pick-reason .pick");
       const chip = e.target.closest(".date-chip");
       const slot = e.target.closest(".slot");
-      if (reason) {
-        state.reason = reason.dataset.id;
+      if (pick) {
+        state.reason = pick.dataset.id;
         renderReasons();
         renderSummary();
-        setTimeout(() => { state.step = 1; show(); scrollToTop(); }, 200);
+        setTimeout(() => { state.step = 1; show(); scrollToTop(); }, 220);
       } else if (chip) {
         state.date = chip.dataset.date;
         state.time = null;
@@ -552,16 +592,17 @@
     const FIELD_ERRORS = { bad_name: "p-name", bad_phone: "p-phone", bad_age: "p-age", bad_gender: null, bad_notes: "p-notes" };
     const SLOT_ERRORS = ["bad_date", "bad_time", "slot_past", "slot_full", "day_full"];
     let sending = false;
+    let last = null; // the finished booking, so the success screen can be re-drawn in the other language
 
     async function confirm() {
       if (sending) return;
       const data = Object.fromEntries(new FormData(form));
-      const appt = { ref: newRef(), reason: reasonLabel(), date: state.date, time: state.time, name: data.name.trim() };
+      const appt = { ref: newRef(), reason: reason().label[0], date: state.date, time: state.time, name: data.name.trim() };
       if (!useOnline()) { finish(appt, data, false); return; }
 
       sending = true;
       next.disabled = back.disabled = true;
-      next.innerHTML = `<span class="spinner" aria-hidden="true"></span> Sending…`;
+      next.innerHTML = `<span class="spinner" aria-hidden="true"></span> ${t("sending")}`;
       const send = () => api.book({
         ref: appt.ref, reason: appt.reason, preferred_date: appt.date, preferred_time: appt.time,
         patient_name: appt.name, phone: data.phone, age: parseInt(data.age, 10), gender: data.gender,
@@ -592,7 +633,7 @@
         show();
         loadTaken(state.date);
       }
-      showError(r.message || "Sorry, the booking could not be made. Please call the hospital.");
+      showError(I.errorText(r.error, r.message || t("bookFailed")));
     }
 
     // sent = the hospital's OPD software has the request; otherwise the patient sends it on WhatsApp.
@@ -600,22 +641,29 @@
       const all = store.get("vhc-appointments", []);
       all.push({ ...appt, sent });
       store.set("vhc-appointments", all);
-      const msg = `Hello ${SITE.name}, I would like an appointment.\n\nRef: ${appt.ref}\nPatient: ${appt.name} (${data.age} yrs, ${data.gender})\nMobile: ${data.phone}\nReason: ${appt.reason}\nPreferred: ${prettyDate(appt.date)} at ${fmtTime(appt.time)}${data.notes ? "\nDetails: " + data.notes : ""}`;
-      $("#success-title").textContent = sent ? "Booking request received" : "Request ready";
-      $("#success-sent").hidden = !sent;
-      $("#success-unsent").hidden = sent;
-      $("#success-ref").textContent = appt.ref;
-      $("#success-when").textContent = `${prettyDate(appt.date)} at ${fmtTime(appt.time)} · ${SITE.doctor.name}`;
-      $("#success-wa").href = waHref(msg);
-      $("#success-wa").hidden = sent;
-      $("#success-ics").onclick = () => downloadIcs(appt);
+      last = { appt, data, sent };
+      drawSuccess();
       state.step = 4;
       show();
       scrollToTop();
       renderMine();
     }
+    function drawSuccess() {
+      if (!last) return;
+      const { appt, data, sent } = last;
+      const msg = `Hello ${SITE.name}, I would like an appointment.\n\nRef: ${appt.ref}\nPatient: ${appt.name} (${data.age} yrs, ${data.gender})\nMobile: ${data.phone}\nReason: ${appt.reason}\nPreferred: ${prettyDateEn(appt.date)} at ${fmtTime(appt.time)}${data.notes ? "\nDetails: " + data.notes : ""}`;
+      $("#success-title").textContent = sent ? t("titleSent") : t("titleReady");
+      $("#success-sent").hidden = !sent;
+      $("#success-unsent").hidden = sent;
+      $("#success-ref").textContent = appt.ref;
+      $("#success-when").textContent = `${prettyDate(appt.date)} · ${fmtTime(appt.time)} · ${L(SITE.doctor.name)}`;
+      $("#success-wa").href = waHref(msg);
+      $("#success-wa").hidden = sent;
+      $("#success-ics").onclick = () => downloadIcs(appt);
+    }
     $("#book-another").addEventListener("click", () => {
       Object.assign(state, { step: 0, reason: null, date: null, time: null });
+      last = null;
       form.reset();
       show();
       scrollToTop();
@@ -627,21 +675,22 @@
       const todayKey = dateKey(new Date());
       const list = store.get("vhc-appointments", []).filter((a) => a.date >= todayKey).sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
       $("#my-appts-box").hidden = !list.length;
-      wrap.innerHTML = list.map((a) => `<div class="appt-row">
-        <div class="info"><strong>${prettyDate(a.date)} · ${fmtTime(a.time)}</strong><small>${escapeHtml(a.name)} · ${escapeHtml(a.reason)} · ${escapeHtml(a.ref)}${a.sent ? " · sent to hospital" : ""}</small></div>
-        <button class="btn icon-btn" type="button" data-cancel="${a.ref}" aria-label="Remove ${a.ref}">${icon("trash")}</button>
+      wrap.innerHTML = list.map((a) => `<div class="appt-row${a.sent ? " sent" : ""}">
+        <div class="info"><strong>${prettyDate(a.date)} · ${fmtTime(a.time)}</strong><small>${escapeHtml(a.name)} · ${escapeHtml(a.reason)} · ${escapeHtml(a.ref)}${a.sent ? t("sentTag") : ""}</small></div>
+        <button class="icon-btn" type="button" data-cancel="${escapeHtml(a.ref)}" aria-label="${t("remove")} ${escapeHtml(a.ref)}">${icon("trash")}</button>
       </div>`).join("");
     }
     $("#my-appts").addEventListener("click", (e) => {
       const b = e.target.closest("[data-cancel]");
-      if (!b || !window.confirm("Remove this request from this device? Please also call the clinic to cancel.")) return;
+      if (!b || !window.confirm(t("removeAsk"))) return;
       store.set("vhc-appointments", store.get("vhc-appointments", []).filter((a) => a.ref !== b.dataset.cancel));
       renderMine();
-      toast("Removed from this device.");
+      toast(t("removed"));
     });
 
     show();
     renderMine();
+    renderers.push(() => { const err = errorBox.hidden ? "" : $("span", errorBox).textContent; show(); drawSuccess(); renderMine(); if (err) showError(err); });
   }
 
   function downloadIcs(a) {
@@ -653,9 +702,9 @@
     const ics = [
       "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Varnika Speciality Hospital//Appointments//EN", "BEGIN:VEVENT",
       `UID:${a.ref}@${SITE.domain}`, `DTSTAMP:${fmt(new Date())}`, `DTSTART:${fmt(start)}`, `DTEND:${fmt(end)}`,
-      `SUMMARY:${SITE.name} — ${SITE.doctor.name}`,
-      `DESCRIPTION:Ref ${a.ref}. ${a.reason}. Bring earlier X-rays and reports. Call ${SITE.phone} to change.`,
-      `LOCATION:${SITE.address.replace(/,/g, "\\,")}`,
+      `SUMMARY:${SITE.name} — ${SITE.doctor.name.en}`,
+      `DESCRIPTION:Ref ${a.ref}. ${a.reason}. Come 10 minutes early. Bring earlier X-rays and reports. Call ${SITE.phone} to change.`,
+      `LOCATION:${SITE.address.en.replace(/,/g, "\\,")}`,
       "END:VEVENT", "END:VCALENDAR",
     ].join("\r\n");
     const url = URL.createObjectURL(new Blob([ics], { type: "text/calendar" }));
@@ -669,13 +718,23 @@
   }
 
   /* ---------------------------------------------------------------- Boot */
-  function boot() {
-    injectSprite();
+  function renderAll() {
+    I.applyStatic();
     renderHeader();
     renderFooter();
     fillSiteData();
-    initHeader();
-    initOpenStatus();
+    renderOpenStatus();
+    renderers.forEach((fn) => fn());
+  }
+
+  function boot() {
+    injectSprite();
+    I.applyStatic();
+    renderHeader();
+    renderFooter();
+    fillSiteData();
+    renderOpenStatus();
+    initGlobal();
     initFacilities();
     initServices();
     initFaq();
@@ -683,6 +742,7 @@
     initContactForm();
     initBooking();
     initReveal();
+    setInterval(renderOpenStatus, 60000);
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();
