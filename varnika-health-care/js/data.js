@@ -1,17 +1,18 @@
 /* ==========================================================================
-   Varnika Healthcare — Orthopaedic Clinic: site content
+   Varnika Speciality Hospital: site content
    --------------------------------------------------------------------------
    Edit this file to update clinic details, services and FAQs. Every page
    reads from here, so a change made once shows up everywhere.
    ========================================================================== */
 
 window.SITE = {
-  name: "Varnika Healthcare",
-  type: "Orthopaedic Clinic",
+  name: "Varnika Speciality Hospital",
+  type: "Orthopaedics · Keeramangalam",
+  domain: "varnikahospital.in",
   phone: "+91 91599 98099",
   whatsapp: "919159998099", // country code + number, digits only
-  address: "No. 2, Annai Vaniha Valagam, Kiramangalam, Opposite to Bus Terminus, Alangudi Taluk, Pudukottai – 614 624",
-  addressShort: "Opp. Bus Terminus, Kiramangalam, Alangudi Tk, Pudukottai",
+  address: "No. 2, Annai Vaniha Valagam, Keeramangalam, Opposite to Bus Terminus, Alangudi Taluk, Pudukottai – 614 624",
+  addressShort: "Opp. Bus Terminus, Keeramangalam, Alangudi Tk, Pudukottai",
   // Google Maps pin for the clinic, used by every "Get directions" button.
   mapLink: "https://maps.app.goo.gl/VpykLbZAs5YMKypq6",
   // Used for the embedded map on the Contact page. For an exact pin, replace
@@ -20,7 +21,7 @@ window.SITE = {
   // Same hours every day of the week, including Sundays and holidays.
   hours: ["17:00", "21:00"],
   doctor: {
-    name: "Dr. S. Shivabharathi",
+    name: "Dr. S. SIVABHARATHI",
     initials: "SS",
     quals: "MBBS, MS (Ortho)",
     title: "Consultant Orthopaedic Surgeon",

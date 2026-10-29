@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Sets up an Oracle Cloud Ubuntu VM to serve the Varnika Healthcare website
+# Sets up an Oracle Cloud Ubuntu VM to serve the Varnika Speciality Hospital website
 # with nginx and a free HTTPS certificate from Let's Encrypt.
 #
 # Run it on the VM, from inside the varnika-health-care folder:

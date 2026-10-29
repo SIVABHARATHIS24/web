@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Varnika Healthcare — site behaviour
+   Varnika Speciality Hospital — site behaviour
    Shared header/footer, icons, and the interactive widgets. Content lives
    in data.js.
    ========================================================================== */
@@ -160,7 +160,7 @@
       </footer>
       <div class="fab-wrap">
         <button class="fab top" type="button" aria-label="Back to top">${icon("arrow-up")}</button>
-        <a class="fab wa" href="${waHref("Hello Varnika Healthcare, I have a query.")}" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">${icon("chat")}</a>
+        <a class="fab wa" href="${waHref("Hello Varnika Speciality Hospital, I have a query.")}" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">${icon("chat")}</a>
         <a class="fab call" href="${telHref(SITE.phone)}" aria-label="Call the clinic">${icon("phone")}</a>
       </div>
       <div class="toast glass" role="status" aria-live="polite"></div>`;
@@ -555,8 +555,8 @@
     const end = new Date(start.getTime() + 15 * 60000);
     const fmt = (d) => `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, "0")}${String(d.getDate()).padStart(2, "0")}T${String(d.getHours()).padStart(2, "0")}${String(d.getMinutes()).padStart(2, "0")}00`;
     const ics = [
-      "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Varnika Healthcare//Appointments//EN", "BEGIN:VEVENT",
-      `UID:${a.ref}@varnikahealthcare`, `DTSTAMP:${fmt(new Date())}`, `DTSTART:${fmt(start)}`, `DTEND:${fmt(end)}`,
+      "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Varnika Speciality Hospital//Appointments//EN", "BEGIN:VEVENT",
+      `UID:${a.ref}@${SITE.domain}`, `DTSTAMP:${fmt(new Date())}`, `DTSTART:${fmt(start)}`, `DTEND:${fmt(end)}`,
       `SUMMARY:${SITE.name} — ${SITE.doctor.name}`,
       `DESCRIPTION:Ref ${a.ref}. ${a.reason}. Bring earlier X-rays and reports. Call ${SITE.phone} to change.`,
       `LOCATION:${SITE.address.replace(/,/g, "\\,")}`,

@@ -1,7 +1,7 @@
-# Varnika Healthcare — Orthopaedic Clinic website
+# Varnika Speciality Hospital — website
 
-Website for **Varnika Healthcare, Orthopaedic Clinic**, Kiramangalam, Pudukottai.
-Dr. S. Shivabharathi, MBBS, MS (Ortho), Consultant Orthopaedic Surgeon (Reg. No. 114118).
+Website for **Varnika Speciality Hospital**, Keeramangalam, Pudukottai — **varnikahospital.in**.
+Dr. S. SIVABHARATHI, MBBS, MS (Ortho), Consultant Orthopaedic Surgeon (Reg. No. 114118).
 
 The design uses a Windows Vista–style "Aero glass" theme: an aurora background, translucent blurred glass windows with title bars, glossy buttons and orb icons.
 

@@ -2,15 +2,9 @@
 
 This guide puts the site on an **Oracle Cloud Always Free** virtual machine, with your own domain and free HTTPS (the padlock in the browser). The VM and the HTTPS certificate cost nothing. You pay only for the domain, usually a few hundred rupees a year.
 
-## 1. Buy a domain
+## 1. Buy the domain
 
-Buy a domain from any registrar (GoDaddy, Hostinger, Namecheap, BigRock and others). Short and easy to say works best, for example:
-
-- `varnikahealthcare.in`
-- `varnikaortho.in`
-- `varnikaorthoclinic.com`
-
-`.in` domains are usually the cheapest and suit a local clinic.
+The site's domain is **`varnikahospital.in`**. Buy it from any registrar (GoDaddy, Hostinger, Namecheap, BigRock and others) and keep the registrar's login handy for step 4.
 
 ## 2. Create the VM in Oracle Cloud
 
@@ -53,7 +47,7 @@ Then, on the VM:
 sudo apt-get update && sudo apt-get install -y git
 git clone https://github.com/SIVABHARATHIS24/web.git
 cd web/varnika-health-care
-sudo bash deploy/setup-server.sh varnikahealthcare.in your-email@example.com
+sudo bash deploy/setup-server.sh varnikahospital.in your-email@example.com
 ```
 
 Use your real domain and email. Let's Encrypt sends certificate-expiry warnings to that email. The script:
@@ -74,7 +68,7 @@ After changing the website (a new phone number, the doctor photo and so on):
 ```bash
 ssh -i path/to/private-key ubuntu@YOUR_VM_IP
 cd web && git pull
-cd varnika-health-care && sudo bash deploy/setup-server.sh varnikahealthcare.in your-email@example.com
+cd varnika-health-care && sudo bash deploy/setup-server.sh varnikahospital.in your-email@example.com
 ```
 
 ## Troubleshooting
