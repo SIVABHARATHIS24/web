@@ -3,163 +3,139 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Book an Appointment — Varnika Health Care</title>
-  <meta name="description" content="Book a doctor's appointment at Varnika Health Care online — choose a department, doctor, date and time in under a minute.">
-  <meta name="theme-color" content="#0f8b8d">
+  <title>Book an Appointment — Varnika Healthcare</title>
+  <meta name="description" content="Request an appointment with Dr. S. Shivabharathi at Varnika Healthcare Orthopaedic Clinic. Open daily 5 PM – 9 PM, including Sundays and holidays.">
+  <meta name="theme-color" content="#063f78">
   <link rel="icon" href="img/logo.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
-  <script>try{var t=localStorage.getItem("vhc-theme");if(t)document.documentElement.dataset.theme=JSON.parse(t)}catch(e){}</script>
 </head>
 <body data-page="appointment">
   <a class="skip-link" href="#main">Skip to content</a>
   <div data-include="header"></div>
 
   <main id="main">
-    <section class="page-hero" style="padding-bottom:40px">
+    <section class="page-title">
       <div class="container">
-        <nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a> / <span>Book appointment</span></nav>
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a> / Appointment</nav>
         <h1>Book an appointment</h1>
-        <p>Five quick steps. For emergencies, please don't wait — call <a data-site="emergencyPhone" href="tel:+919876500108">+91 98765 00108</a> right away.</p>
+        <p>Pick a preferred time between <span data-hours>5 PM – 9 PM</span>, any day. Walk-ins are also welcome during clinic hours.</p>
       </div>
     </section>
 
-    <section class="section" style="padding-top:24px">
+    <section class="section" style="padding-top:20px">
       <div class="container booking" id="booking">
-        <div class="card">
-          <ol class="steps" aria-label="Booking progress">
-            <li><span>Department</span></li>
-            <li><span>Doctor</span></li>
-            <li><span>Date &amp; time</span></li>
-            <li><span>Your details</span></li>
-            <li><span>Confirm</span></li>
-          </ol>
+        <div class="glass win">
+          <div class="win-title"><svg class="ic"><use href="#i-calendar"/></svg><span>Appointment request</span><span class="win-ctrls" aria-hidden="true"><i></i><i></i><i class="close"></i></span></div>
+          <div class="pane">
+            <ol class="progress" aria-label="Progress">
+              <li><i></i><span>Reason</span></li>
+              <li><i></i><span>Date &amp; time</span></li>
+              <li><i></i><span>Patient details</span></li>
+              <li><i></i><span>Confirm</span></li>
+            </ol>
 
-          <!-- Step 1 -->
-          <div class="step-panel">
-            <h2>Which department do you need?</h2>
-            <p class="muted">Not sure? Choose <strong>General Medicine</strong> — our physicians will guide you.</p>
-            <div class="pick-grid" id="pick-dept"></div>
-          </div>
+            <div class="step-panel">
+              <h2>What is the visit for?</h2>
+              <div class="pick-grid" id="pick-reason"></div>
+            </div>
 
-          <!-- Step 2 -->
-          <div class="step-panel">
-            <h2>Choose your doctor</h2>
-            <p class="muted" id="doc-step-sub"></p>
-            <div class="pick-grid docs" id="pick-doc"></div>
-          </div>
+            <div class="step-panel">
+              <h2>Choose a date and time</h2>
+              <p class="muted">The clinic is open every day from <span data-hours>5 PM – 9 PM</span>.</p>
+              <div class="date-strip" id="date-strip"></div>
+              <div id="slot-wrap"></div>
+            </div>
 
-          <!-- Step 3 -->
-          <div class="step-panel">
-            <h2>Pick a date &amp; time</h2>
-            <p class="muted">Only the days your doctor is available are shown. Greyed-out times are already booked.</p>
-            <div class="date-strip" id="date-strip"></div>
-            <div id="slot-wrap"></div>
-          </div>
-
-          <!-- Step 4 -->
-          <div class="step-panel">
-            <h2>Patient details</h2>
-            <p class="muted">We'll use these to confirm your appointment by phone or SMS.</p>
-            <form id="patient-form" novalidate>
-              <div class="form-grid">
-                <div class="field full">
-                  <label for="p-name">Full name <span class="req">*</span></label>
-                  <input id="p-name" name="name" autocomplete="name" data-validate="required">
-                  <span class="err">Please enter the patient's name.</span>
-                </div>
-                <div class="field">
-                  <label for="p-phone">Mobile number <span class="req">*</span></label>
-                  <input id="p-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="98765 43210" data-validate="required phone">
-                  <span class="err">Enter a valid 10-digit mobile number.</span>
-                </div>
-                <div class="field">
-                  <label for="p-email">Email <span class="muted">(optional)</span></label>
-                  <input id="p-email" name="email" type="email" autocomplete="email" data-validate="email">
-                  <span class="err">That email doesn't look right.</span>
-                </div>
-                <div class="field">
-                  <label for="p-age">Age <span class="req">*</span></label>
-                  <input id="p-age" name="age" type="number" min="0" max="120" inputmode="numeric" data-validate="age">
-                  <span class="err">Enter an age between 0 and 120.</span>
-                </div>
-                <div class="field">
-                  <span style="display:block;font-weight:700;font-size:.9rem;margin-bottom:6px">Gender <span class="req">*</span></span>
-                  <div class="radio-row">
-                    <label class="radio-pill"><input type="radio" name="gender" value="Female" checked><span>Female</span></label>
-                    <label class="radio-pill"><input type="radio" name="gender" value="Male"><span>Male</span></label>
-                    <label class="radio-pill"><input type="radio" name="gender" value="Other"><span>Other</span></label>
+            <div class="step-panel">
+              <h2>Patient details</h2>
+              <form id="patient-form" novalidate>
+                <div class="form-grid">
+                  <div class="field full">
+                    <label for="p-name">Patient's name <span class="req">*</span></label>
+                    <input class="input" id="p-name" name="name" autocomplete="name" data-validate="required">
+                    <span class="err">Please enter the patient's name.</span>
+                  </div>
+                  <div class="field">
+                    <label for="p-phone">Mobile number <span class="req">*</span></label>
+                    <input class="input" id="p-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="10-digit mobile number" data-validate="required phone">
+                    <span class="err">Enter a valid 10-digit mobile number.</span>
+                  </div>
+                  <div class="field">
+                    <label for="p-age">Age <span class="req">*</span></label>
+                    <input class="input" id="p-age" name="age" type="number" min="0" max="120" inputmode="numeric" data-validate="age">
+                    <span class="err">Enter an age between 0 and 120.</span>
+                  </div>
+                  <div class="field full">
+                    <span class="label">Gender</span>
+                    <div class="radios">
+                      <label><input type="radio" name="gender" value="Female" checked> Female</label>
+                      <label><input type="radio" name="gender" value="Male"> Male</label>
+                      <label><input type="radio" name="gender" value="Other"> Other</label>
+                    </div>
+                  </div>
+                  <div class="field full">
+                    <label for="p-notes">Describe the problem <span class="muted">(optional)</span></label>
+                    <textarea class="input" id="p-notes" name="notes" placeholder="e.g. Fell from a bike yesterday, right wrist pain and swelling"></textarea>
                   </div>
                 </div>
-                <div class="field full">
-                  <span style="display:block;font-weight:700;font-size:.9rem;margin-bottom:6px">Visit type</span>
-                  <div class="radio-row">
-                    <label class="radio-pill"><input type="radio" name="visit" value="New patient" checked><span>New patient</span></label>
-                    <label class="radio-pill"><input type="radio" name="visit" value="Follow-up"><span>Follow-up</span></label>
-                    <label class="radio-pill"><input type="radio" name="visit" value="Video consultation"><span>Video consultation</span></label>
-                  </div>
-                </div>
-                <div class="field full">
-                  <label for="p-reason">Reason for visit <span class="muted">(optional)</span></label>
-                  <textarea id="p-reason" name="reason" placeholder="Briefly describe your symptoms or concern"></textarea>
-                </div>
-              </div>
-              <button type="submit" hidden></button>
-            </form>
-          </div>
+                <button type="submit" hidden></button>
+              </form>
+            </div>
 
-          <!-- Step 5 -->
-          <div class="step-panel">
-            <h2>Review &amp; confirm</h2>
-            <p class="muted">Please check everything is correct.</p>
-            <div class="review" id="review"></div>
-          </div>
-
-          <!-- Done -->
-          <div class="step-panel">
-            <div class="success">
-              <div class="success-icon"><svg class="ic"><use href="#i-check"/></svg></div>
-              <h2>Appointment requested!</h2>
-              <p class="muted" id="success-when"></p>
-              <div>Your reference number</div>
-              <div class="ref" id="success-ref"></div>
-              <p class="muted" style="max-width:520px;margin:0 auto 24px">Our front desk will call you to confirm. To get confirmed faster, send your booking to us on WhatsApp. Please arrive 15 minutes early and bring a photo ID and any previous reports.</p>
-              <div class="btns">
-                <a class="btn btn-primary" id="success-wa" href="#" target="_blank" rel="noopener"><svg class="ic"><use href="#i-chat"/></svg> Send on WhatsApp</a>
-                <button class="btn btn-ghost" type="button" id="success-ics"><svg class="ic"><use href="#i-download"/></svg> Add to calendar</button>
-                <button class="btn btn-ghost" type="button" id="success-print"><svg class="ic"><use href="#i-printer"/></svg> Print</button>
-                <button class="btn btn-ghost" type="button" id="book-another">Book another</button>
+            <div class="step-panel">
+              <h2>Check and confirm</h2>
+              <table class="kv review" id="review"></table>
+              <div class="notice info" style="margin-top:16px">
+                <svg class="ic"><use href="#i-info"/></svg>
+                <span>This is a request for your preferred time. The clinic will confirm it by phone.</span>
               </div>
             </div>
-          </div>
 
-          <div class="wizard-nav">
-            <button class="btn btn-ghost" type="button" id="wiz-back"><svg class="ic"><use href="#i-arrow-left"/></svg> Back</button>
-            <button class="btn btn-primary" type="button" id="wiz-next">Continue</button>
+            <div class="step-panel">
+              <div class="success">
+                <span class="orb green"><svg class="ic"><use href="#i-check"/></svg></span>
+                <h2>Request ready</h2>
+                <p class="muted" id="success-when"></p>
+                <div>Reference number</div>
+                <div class="ref" id="success-ref"></div>
+                <p class="muted" style="max-width:500px;margin:0 auto 18px"><strong>Please send this request to the clinic on WhatsApp</strong> so we receive it. We'll confirm your time. Bring any earlier X-rays and reports.</p>
+                <div class="btn-row">
+                  <a class="btn btn-green" id="success-wa" href="#" target="_blank" rel="noopener"><svg class="ic"><use href="#i-chat"/></svg> Send on WhatsApp</a>
+                  <button class="btn" type="button" id="success-ics"><svg class="ic"><use href="#i-download"/></svg> Add to calendar</button>
+                  <button class="btn" type="button" id="success-print"><svg class="ic"><use href="#i-printer"/></svg> Print</button>
+                  <button class="btn" type="button" id="book-another">New request</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="pane-foot wizard-nav">
+              <button class="btn" type="button" id="wiz-back" style="margin-right:auto"><svg class="ic"><use href="#i-arrow-left"/></svg> Back</button>
+              <button class="btn btn-primary" type="button" id="wiz-next">Next</button>
+            </div>
           </div>
         </div>
 
-        <aside>
-          <div class="card summary">
-            <h3 style="margin-bottom:18px">Your appointment</h3>
-            <dl>
-              <div><dt>Department</dt><dd id="sum-dept"></dd></div>
-              <div><dt>Doctor</dt><dd id="sum-doc"></dd></div>
-              <div><dt>Date</dt><dd id="sum-date"></dd></div>
-              <div><dt>Time</dt><dd id="sum-time"></dd></div>
-              <div id="sum-pkg-row" hidden><dt>Health package</dt><dd id="sum-pkg"></dd></div>
-            </dl>
-            <hr style="border:0;border-top:1px solid var(--border);margin:22px 0">
-            <p class="muted" style="font-size:.9rem;margin-bottom:12px">Prefer to talk to someone?</p>
-            <a class="btn btn-ghost btn-block btn-sm" data-site="phone" href="tel:+919876543210">+91 98765 43210</a>
-
-            <div class="my-appts" hidden>
-              <hr style="border:0;border-top:1px solid var(--border);margin:22px 0 6px">
-              <h3 style="font-size:1rem;margin:14px 0 4px">Your upcoming visits</h3>
-              <small class="muted">Saved on this device</small>
-              <div id="my-appts"></div>
+        <aside class="summary">
+          <div class="glass win">
+            <div class="win-title"><svg class="ic"><use href="#i-clipboard"/></svg><span>Summary</span></div>
+            <div class="pane">
+              <dl>
+                <div><dt>Doctor</dt><dd data-doctor="name">Dr. S. Shivabharathi</dd></div>
+                <div><dt>Reason</dt><dd id="sum-reason"></dd></div>
+                <div><dt>Date</dt><dd id="sum-date"></dd></div>
+                <div><dt>Time</dt><dd id="sum-time"></dd></div>
+              </dl>
+              <div id="my-appts-box" hidden>
+                <hr style="border:0;border-top:1px solid var(--pane-line);margin:16px 0 8px">
+                <strong style="font-size:.92rem">Your requests (saved on this device)</strong>
+                <div id="my-appts"></div>
+              </div>
+              <div class="pane-foot" style="justify-content:stretch">
+                <a class="btn btn-green btn-block" data-tel href="tel:+919876543210"><svg class="ic"><use href="#i-phone"/></svg> <span data-site="phone">+91 98765 43210</span></a>
+              </div>
             </div>
           </div>
         </aside>

@@ -1,160 +1,97 @@
 /* ==========================================================================
-   Varnika Health Care — site content
+   Varnika Healthcare — Orthopaedic Clinic: site content
    --------------------------------------------------------------------------
-   Edit this file to update hospital details, departments, doctors, packages
-   and FAQs. Every page reads from here, so a change made once shows up
-   everywhere.
-
-   NOTE: The contact details, doctor names and prices below are SAMPLE
-   placeholders. Replace them with Varnika Health Care's real information
-   before publishing.
+   Edit this file to update clinic details, services and FAQs. Every page
+   reads from here, so a change made once shows up everywhere.
    ========================================================================== */
 
 window.SITE = {
-  name: "Varnika Health Care",
-  tagline: "Multi-Speciality Hospital",
+  name: "Varnika Healthcare",
+  type: "Orthopaedic Clinic",
+  // TODO: replace with the clinic's real phone and WhatsApp numbers.
   phone: "+91 98765 43210",
-  emergencyPhone: "+91 98765 00108",
   whatsapp: "919876543210", // country code + number, digits only
-  email: "care@varnikahealthcare.in",
-  address: "No. 12, Main Road, Anna Nagar, Chennai, Tamil Nadu 600040",
-  mapQuery: "Anna Nagar, Chennai", // used for the Google Maps embed on the Contact page
-  founded: 2008,
-  // OPD hours by weekday (0 = Sunday). null = closed. Emergency is 24/7 regardless.
-  opdHours: {
-    0: ["09:00", "13:00"],
-    1: ["08:00", "20:00"],
-    2: ["08:00", "20:00"],
-    3: ["08:00", "20:00"],
-    4: ["08:00", "20:00"],
-    5: ["08:00", "20:00"],
-    6: ["08:00", "18:00"],
+  address: "No. 2, Annai Vaniha Valagam, Kiramangalam, Opposite to Bus Terminus, Alangudi Taluk, Pudukottai – 614 624",
+  addressShort: "Opp. Bus Terminus, Kiramangalam, Alangudi Tk, Pudukottai",
+  mapQuery: "Keeramangalam Bus Stand, Pudukkottai 614624",
+  // Same hours every day of the week, including Sundays and holidays.
+  hours: ["17:00", "21:00"],
+  doctor: {
+    name: "Dr. S. Shivabharathi",
+    initials: "SS",
+    quals: "MBBS, MS (Ortho)",
+    title: "Consultant Orthopaedic Surgeon",
+    reg: "114118",
+    photo: "img/doctor.jpg", // add the photo at this path; initials show until then
   },
-  social: { facebook: "#", instagram: "#", youtube: "#", linkedin: "#" },
 };
 
-window.DEPARTMENTS = [
-  { id: "cardiology", name: "Cardiology", icon: "heart", group: "medical",
-    short: "Complete heart care — from ECG and echo to angioplasty and cardiac rehab.",
-    about: "Our cardiology team diagnoses and treats conditions of the heart and blood vessels, with a 24/7 cath lab and a dedicated cardiac ICU.",
-    services: ["ECG, Echo & TMT", "Coronary angiography & angioplasty", "Pacemaker implantation", "Heart failure clinic", "Cardiac rehabilitation"] },
-  { id: "neurology", name: "Neurology", icon: "brain", group: "medical",
-    short: "Expert care for stroke, epilepsy, migraine, and nerve & spine disorders.",
-    about: "Stroke-ready emergency protocols, EEG/EMG studies and long-term management of neurological conditions.",
-    services: ["Stroke management", "EEG & nerve conduction studies", "Epilepsy & seizure clinic", "Headache & migraine clinic", "Movement disorders"] },
-  { id: "orthopaedics", name: "Orthopaedics", icon: "bone", group: "surgical",
-    short: "Joint replacement, sports injuries, fracture care and spine surgery.",
-    about: "From a sprained ankle to a total knee replacement, our orthopaedic surgeons help you move freely again.",
-    services: ["Knee & hip replacement", "Arthroscopy & sports injuries", "Fracture & trauma care", "Spine surgery", "Paediatric orthopaedics"] },
-  { id: "paediatrics", name: "Paediatrics", icon: "baby", group: "women-child",
-    short: "Gentle, child-friendly care from newborns to teenagers, with a Level III NICU.",
-    about: "Vaccinations, growth monitoring, neonatal intensive care and treatment for childhood illnesses — in a space designed for kids.",
-    services: ["Level III NICU", "Vaccination clinic", "Growth & development", "Paediatric emergency", "Child nutrition"] },
-  { id: "obgyn", name: "Obstetrics & Gynaecology", icon: "venus", group: "women-child",
-    short: "Pregnancy care, safe deliveries, fertility support and women's wellness.",
-    about: "Comfortable birthing suites, high-risk pregnancy care and minimally invasive gynaecological surgery.",
-    services: ["Antenatal & postnatal care", "Normal & C-section delivery", "High-risk pregnancy", "Fertility & IVF counselling", "Laparoscopic gynae surgery"] },
-  { id: "general-medicine", name: "General Medicine", icon: "pill", group: "medical",
-    short: "Your first stop for fever, diabetes, BP, infections and preventive check-ups.",
-    about: "Our physicians manage acute illnesses and long-term conditions, and coordinate your care across specialities.",
-    services: ["Diabetes & thyroid care", "Hypertension clinic", "Fever & infections", "Preventive health check-ups", "Geriatric care"] },
-  { id: "general-surgery", name: "General & Laparoscopic Surgery", icon: "scissors", group: "surgical",
-    short: "Keyhole surgery for gallbladder, hernia, appendix and more — faster recovery.",
-    about: "Modular operation theatres and minimally invasive techniques mean less pain and shorter hospital stays.",
-    services: ["Laparoscopic gallbladder surgery", "Hernia repair", "Appendectomy", "Piles & fistula (laser)", "Day-care surgery"] },
-  { id: "ent", name: "ENT", icon: "ear", group: "surgical",
-    short: "Ear, nose and throat care including sinus surgery and hearing tests.",
-    about: "Endoscopic sinus surgery, tonsil and adenoid care, audiometry and treatment for vertigo.",
-    services: ["Endoscopic sinus surgery", "Audiometry & hearing aids", "Tonsillectomy", "Vertigo clinic", "Voice & swallowing disorders"] },
-  { id: "dermatology", name: "Dermatology", icon: "sparkles", group: "medical",
-    short: "Skin, hair and nail care — acne, allergies, psoriasis and cosmetic treatments.",
-    about: "Clinical and aesthetic dermatology using evidence-based treatments for all skin types.",
-    services: ["Acne & scar treatment", "Psoriasis & eczema", "Hair loss clinic", "Chemical peels", "Skin allergy testing"] },
-  { id: "ophthalmology", name: "Ophthalmology", icon: "eye", group: "surgical",
-    short: "Cataract surgery, glaucoma care, retina checks and vision correction.",
-    about: "Micro-incision cataract surgery and complete eye check-ups for every age.",
-    services: ["Cataract surgery (MICS)", "Glaucoma care", "Diabetic retinopathy screening", "Paediatric eye care", "Spectacle & contact lens clinic"] },
-  { id: "nephrology", name: "Nephrology & Dialysis", icon: "droplet", group: "medical",
-    short: "Kidney care with a modern dialysis unit open seven days a week.",
-    about: "Management of kidney disease, stones and hypertension, with a calm, well-equipped dialysis unit.",
-    services: ["Haemodialysis", "Chronic kidney disease clinic", "Kidney stone management", "Renal transplant follow-up"] },
-  { id: "emergency", name: "Emergency & Trauma", icon: "ambulance", group: "critical",
-    short: "24/7 emergency room, ambulance service and critical care ICU.",
-    about: "Our emergency department is staffed round the clock with emergency physicians, and backed by a 20-bed ICU.",
-    services: ["24/7 emergency room", "Ambulance with life support", "Trauma care", "Critical care ICU", "Poison & burns care"] },
-  { id: "radiology", name: "Radiology & Imaging", icon: "scan", group: "diagnostics",
-    short: "Digital X-ray, ultrasound, CT and MRI with quick, accurate reports.",
-    about: "In-house imaging means faster diagnosis and fewer trips for you.",
-    services: ["Digital X-ray", "Ultrasound & Doppler", "CT scan", "MRI", "Mammography"] },
-  { id: "laboratory", name: "Laboratory & Pathology", icon: "flask", group: "diagnostics",
-    short: "Fully automated lab with home sample collection and online reports.",
-    about: "Accurate, quality-controlled testing with most reports available the same day.",
-    services: ["Blood tests & biochemistry", "Microbiology", "Histopathology", "Home sample collection", "Online report access"] },
-  { id: "physiotherapy", name: "Physiotherapy & Rehab", icon: "person", group: "allied",
-    short: "Recover strength and mobility after injury, surgery or stroke.",
-    about: "Personalised rehab plans from experienced physiotherapists.",
-    services: ["Post-surgery rehab", "Sports physiotherapy", "Stroke rehabilitation", "Back & neck pain", "Pain management"] },
-  { id: "dental", name: "Dental Care", icon: "smile", group: "allied",
-    short: "Check-ups, root canals, braces, implants and smile makeovers.",
-    about: "Complete dental care for the whole family in a comfortable, hygienic setting.",
-    services: ["Root canal treatment", "Dental implants", "Braces & aligners", "Teeth cleaning & whitening", "Paediatric dentistry"] },
+// Facilities available at the clinic itself.
+window.FACILITIES = [
+  { icon: "stethoscope", title: "Doctor consultation", text: "Examination and treatment advice by the orthopaedic surgeon." },
+  { icon: "scan", title: "X-ray", text: "X-rays taken at the clinic, so you don't need to go elsewhere first." },
+  { icon: "activity", title: "ECG", text: "Heart tracing, for example as a check before surgery." },
+  { icon: "flask", title: "Clinical laboratory", text: "Basic blood and urine investigations." },
 ];
 
-window.DEPT_GROUPS = [
+/* Orthopaedic services.
+   where: "clinic" = done at the clinic, "hospital" = surgery done by the
+   doctor at a nearby hospital. Some services include both. */
+window.SERVICE_GROUPS = [
   { id: "all", name: "All" },
-  { id: "medical", name: "Medical" },
-  { id: "surgical", name: "Surgical" },
-  { id: "women-child", name: "Women & Child" },
-  { id: "critical", name: "Emergency" },
-  { id: "diagnostics", name: "Diagnostics" },
-  { id: "allied", name: "Allied care" },
+  { id: "trauma", name: "Trauma & fractures" },
+  { id: "joints", name: "Joints & sports" },
+  { id: "spine", name: "Spine" },
+  { id: "children", name: "Children" },
+  { id: "procedures", name: "Clinic procedures" },
+  { id: "surgery", name: "Surgeries" },
 ];
 
-// days: 0 = Sun … 6 = Sat. Sample doctors — replace with your real team.
-window.DOCTORS = [
-  { id: "arjun-mehta", name: "Dr. Arjun Mehta", dept: "cardiology", title: "Senior Consultant Cardiologist", quals: "MBBS, MD, DM (Cardiology)", exp: 18, langs: ["English", "Tamil", "Hindi"], days: [1, 2, 3, 4, 5, 6], rating: 4.9, color: "#0f8b8d" },
-  { id: "kavya-raman", name: "Dr. Kavya Raman", dept: "obgyn", title: "Consultant Obstetrician & Gynaecologist", quals: "MBBS, MS (OBG), DNB", exp: 14, langs: ["English", "Tamil"], days: [1, 2, 3, 5, 6], rating: 4.9, color: "#e0607e" },
-  { id: "rohan-iyer", name: "Dr. Rohan Iyer", dept: "orthopaedics", title: "Orthopaedic & Joint Replacement Surgeon", quals: "MBBS, MS (Ortho), FIJR", exp: 16, langs: ["English", "Tamil", "Malayalam"], days: [1, 3, 4, 6], rating: 4.8, color: "#3b82c4" },
-  { id: "sneha-pillai", name: "Dr. Sneha Pillai", dept: "paediatrics", title: "Consultant Paediatrician & Neonatologist", quals: "MBBS, MD (Paed), Fellowship Neonatology", exp: 12, langs: ["English", "Tamil", "Malayalam"], days: [0, 1, 2, 3, 4, 5], rating: 5.0, color: "#f59e0b" },
-  { id: "vikram-nair", name: "Dr. Vikram Nair", dept: "neurology", title: "Consultant Neurologist", quals: "MBBS, MD, DM (Neurology)", exp: 15, langs: ["English", "Malayalam", "Hindi"], days: [2, 4, 6], rating: 4.8, color: "#7c5cd6" },
-  { id: "priya-subramanian", name: "Dr. Priya Subramanian", dept: "general-medicine", title: "Senior Physician & Diabetologist", quals: "MBBS, MD (Gen. Med.)", exp: 20, langs: ["English", "Tamil", "Telugu"], days: [1, 2, 3, 4, 5, 6], rating: 4.9, color: "#10a37f" },
-  { id: "karthik-rao", name: "Dr. Karthik Rao", dept: "general-surgery", title: "Laparoscopic & General Surgeon", quals: "MBBS, MS, FMAS", exp: 13, langs: ["English", "Tamil", "Kannada"], days: [1, 2, 4, 5], rating: 4.7, color: "#ef6c4a" },
-  { id: "ananya-krishnan", name: "Dr. Ananya Krishnan", dept: "dermatology", title: "Consultant Dermatologist", quals: "MBBS, MD (DVL)", exp: 9, langs: ["English", "Tamil"], days: [1, 3, 5, 6], rating: 4.8, color: "#d9467a" },
-  { id: "suresh-babu", name: "Dr. Suresh Babu", dept: "ent", title: "ENT & Head-Neck Surgeon", quals: "MBBS, MS (ENT)", exp: 17, langs: ["English", "Tamil", "Telugu"], days: [2, 3, 5, 6], rating: 4.7, color: "#2b8fb0" },
-  { id: "meera-joshi", name: "Dr. Meera Joshi", dept: "ophthalmology", title: "Cataract & Refractive Surgeon", quals: "MBBS, MS (Ophth), FICO", exp: 11, langs: ["English", "Hindi", "Marathi"], days: [1, 2, 4, 6], rating: 4.9, color: "#4c7bd9" },
-  { id: "rahul-varma", name: "Dr. Rahul Varma", dept: "nephrology", title: "Consultant Nephrologist", quals: "MBBS, MD, DM (Nephrology)", exp: 12, langs: ["English", "Tamil", "Hindi"], days: [1, 3, 5], rating: 4.8, color: "#0e7490" },
-  { id: "lakshmi-devi", name: "Dr. Lakshmi Devi", dept: "emergency", title: "Head — Emergency Medicine", quals: "MBBS, MD (Emergency Medicine)", exp: 14, langs: ["English", "Tamil"], days: [0, 1, 2, 3, 4, 5, 6], rating: 4.9, color: "#e5484d" },
-  { id: "aditya-sharma", name: "Dr. Aditya Sharma", dept: "dental", title: "Consultant Dental Surgeon", quals: "BDS, MDS (Endodontics)", exp: 8, langs: ["English", "Hindi", "Tamil"], days: [1, 2, 3, 4, 5, 6], rating: 4.8, color: "#14a3a3" },
-  { id: "divya-menon", name: "Dr. Divya Menon", dept: "physiotherapy", title: "Senior Physiotherapist", quals: "BPT, MPT (Ortho)", exp: 10, langs: ["English", "Malayalam", "Tamil"], days: [1, 2, 3, 4, 5, 6], rating: 4.9, color: "#8b5cf6" },
-  { id: "sanjay-kumar", name: "Dr. Sanjay Kumar", dept: "radiology", title: "Consultant Radiologist", quals: "MBBS, MD (Radiodiagnosis)", exp: 15, langs: ["English", "Tamil", "Hindi"], days: [1, 2, 3, 4, 5, 6], rating: 4.7, color: "#64748b" },
-  { id: "nisha-thomas", name: "Dr. Nisha Thomas", dept: "cardiology", title: "Interventional Cardiologist", quals: "MBBS, MD, DM (Cardiology)", exp: 10, langs: ["English", "Malayalam", "Tamil"], days: [0, 2, 4, 5], rating: 4.8, color: "#0b7a75" },
-];
-
-window.PACKAGES = [
-  { name: "Basic Wellness", price: 1499, mrp: 2200, tests: 32, desc: "A smart yearly check for adults under 30.",
-    items: ["Complete blood count", "Blood sugar (fasting)", "Lipid profile", "Liver & kidney function", "Urine routine", "Physician consultation"] },
-  { name: "Executive Health", price: 3999, mrp: 6500, tests: 68, featured: true, desc: "Our most popular full-body check for busy professionals.",
-    items: ["Everything in Basic", "HbA1c & thyroid profile", "ECG & chest X-ray", "Ultrasound abdomen", "Vitamin D & B12", "Diet & physician consultation"] },
-  { name: "Senior Citizen Care", price: 4999, mrp: 8000, tests: 80, desc: "Thorough screening tailored for those above 60.",
-    items: ["Everything in Executive", "Echo / TMT", "Bone density (BMD)", "Eye & ENT check-up", "PSA (men) / Pap smear (women)", "Cardiology consultation"] },
-];
-
-window.TESTIMONIALS = [
-  { name: "Ramesh K.", detail: "Knee replacement patient", rating: 5, color: "#3b82c4",
-    text: "Six weeks after my knee replacement I was walking to the temple again. The doctors explained everything clearly and the nurses treated me like family." },
-  { name: "Divya S.", detail: "New mother", rating: 5, color: "#e0607e",
-    text: "From my first scan to delivery, Varnika's maternity team was calm, kind and always available. The birthing suite felt like home." },
-  { name: "Mohammed A.", detail: "Emergency care", rating: 5, color: "#e5484d",
-    text: "My father had chest pain at 2 AM. The ambulance came quickly and the cardiac team was ready when we arrived. They saved his life." },
-  { name: "Lakshmi P.", detail: "Diabetes clinic", rating: 5, color: "#10a37f",
-    text: "My sugar levels are finally under control. The diabetes clinic gave me a plan I could actually follow, and they follow up every month." },
+window.SERVICES = [
+  { group: "trauma", icon: "bandage", title: "Fracture & trauma care", where: ["clinic", "hospital"],
+    text: "Care for broken bones and injuries from accidents, falls and work, from first assessment to recovery.",
+    items: ["Fractures of the arm, leg, wrist, ankle, hip and more", "Plaster casts, slabs and splints", "Closed reduction (setting a bone without an operation)", "Dislocations of the shoulder, elbow, finger and more", "Operation for fractures when needed, at a nearby hospital"] },
+  { group: "trauma", icon: "shield", title: "Soft tissue injuries", where: ["clinic"],
+    text: "Injuries to muscles, ligaments and tendons.",
+    items: ["Sprains and strains", "Muscle and ligament tears", "Wounds, dressings and suture removal", "Crush injuries of the hand and foot"] },
+  { group: "joints", icon: "bone", title: "Knee, hip & joint pain", where: ["clinic", "hospital"],
+    text: "Diagnosis and treatment of painful, stiff or swollen joints.",
+    items: ["Knee and hip osteoarthritis", "Rheumatoid and other inflammatory arthritis", "Gout", "Joint injections", "Knee and hip replacement, at a nearby hospital"] },
+  { group: "joints", icon: "dumbbell", title: "Sports injuries", where: ["clinic", "hospital"],
+    text: "Injuries from sport, exercise and active work.",
+    items: ["Ligament injuries of the knee (ACL, PCL, MCL)", "Meniscus tears", "Ankle sprains and instability", "Tendon problems", "Arthroscopic (keyhole) surgery, at a nearby hospital"] },
+  { group: "joints", icon: "person", title: "Shoulder & elbow", where: ["clinic", "hospital"],
+    text: "Pain, stiffness and weakness in the shoulder and elbow.",
+    items: ["Frozen shoulder", "Rotator cuff problems", "Recurrent shoulder dislocation", "Tennis elbow and golfer's elbow"] },
+  { group: "joints", icon: "hand", title: "Hand & wrist", where: ["clinic", "hospital"],
+    text: "Problems that affect the grip and fine movements.",
+    items: ["Carpal tunnel syndrome", "Trigger finger", "De Quervain's tenosynovitis", "Ganglion cysts", "Hand and wrist fractures"] },
+  { group: "joints", icon: "footprints", title: "Foot & ankle", where: ["clinic", "hospital"],
+    text: "Pain and deformities of the foot and ankle.",
+    items: ["Heel pain and plantar fasciitis", "Achilles tendon problems", "Flat feet", "Bunions and toe deformities", "Diabetic foot problems"] },
+  { group: "spine", icon: "spine", title: "Back & neck pain", where: ["clinic", "hospital"],
+    text: "Assessment and treatment of spine problems.",
+    items: ["Low back pain and neck pain", "Disc prolapse and sciatica", "Cervical and lumbar spondylosis", "Spine fractures", "Spine surgery when needed, at a nearby hospital"] },
+  { group: "children", icon: "baby", title: "Paediatric orthopaedics", where: ["clinic", "hospital"],
+    text: "Bone and joint problems in babies, children and teenagers.",
+    items: ["Clubfoot (CTEV) — Ponseti casting", "Children's fractures", "Bow legs and knock knees", "Limping child", "Hip problems in babies (DDH)", "Flat feet and walking problems"] },
+  { group: "joints", icon: "shield", title: "Bone health", where: ["clinic"],
+    text: "Keeping bones strong, especially as you get older.",
+    items: ["Osteoporosis assessment and treatment", "Vitamin D and calcium deficiency", "Fall and fracture prevention advice", "Bone infections and bone swellings (assessment)"] },
+  { group: "procedures", icon: "syringe", title: "Procedures at the clinic", where: ["clinic"],
+    text: "Minor procedures done at the clinic itself.",
+    items: ["Plaster cast application and removal", "Splinting and strapping", "Joint aspiration (removing fluid)", "Joint and soft-tissue injections", "Wound dressing and suture removal"] },
+  { group: "surgery", icon: "hospital", title: "Surgeries at a nearby hospital", where: ["hospital"],
+    text: "When an operation is needed, the doctor performs it at a nearby hospital and continues your follow-up at the clinic.",
+    items: ["Fracture fixation (plates, nails, screws, wires)", "Arthroscopy (keyhole joint surgery)", "Knee and hip replacement", "Spine surgery", "Implant removal", "Deformity correction in children and adults"] },
 ];
 
 window.FAQS = [
-  { q: "Do I need an appointment to see a doctor?", a: "Walk-ins are welcome during OPD hours, but booking an appointment online or by phone means a much shorter wait. Emergency care never needs an appointment — just come in or call our emergency line." },
-  { q: "Which insurance and TPA cards do you accept?", a: "We accept most major health insurance providers and TPAs, as well as government schemes. Our insurance desk will help you with cashless approvals — bring your insurance card and a photo ID." },
-  { q: "Is the emergency department open 24/7?", a: "Yes. Our emergency room, ICU, pharmacy, laboratory and ambulance service are available 24 hours a day, 7 days a week, including holidays." },
-  { q: "Can I get my lab reports online?", a: "Yes. Most reports are ready the same day and are sent to your registered mobile number and email. You can also collect printed copies from the lab counter." },
-  { q: "Do you offer home sample collection?", a: "Yes, we offer home sample collection for blood and urine tests within the city. Call us or message us on WhatsApp to schedule a convenient time." },
-  { q: "What should I bring for my first visit?", a: "Please bring a photo ID, any previous prescriptions or medical reports, a list of medicines you take, and your insurance card if applicable." },
+  { q: "What are the clinic timings?", a: "The clinic is open from 5 PM to 9 PM every day, including Sundays and holidays." },
+  { q: "Is the clinic open 24 hours?", a: "No. The clinic is open only from 5 PM to 9 PM. For serious injuries outside these hours, please go to the nearest hospital emergency department or call 108 for an ambulance." },
+  { q: "Do I need an appointment?", a: "You can walk in during clinic hours. Booking a time in advance helps us plan and can reduce your waiting time." },
+  { q: "Can I get an X-ray, ECG or blood test at the clinic?", a: "Yes. X-ray, ECG and basic laboratory investigations are available at the clinic." },
+  { q: "Where are operations done?", a: "The clinic does not have an operation theatre. When surgery is needed, the doctor performs it at a nearby hospital and explains the plan and arrangements during your consultation." },
+  { q: "Do you treat children?", a: "Yes. We see children of all ages with fractures, clubfoot, bow legs, flat feet, limping and other bone and joint problems." },
+  { q: "What should I bring to my visit?", a: "Please bring any earlier X-rays, scans, reports and prescriptions, and a list of the medicines you take." },
 ];

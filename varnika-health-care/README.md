@@ -1,38 +1,29 @@
-# Varnika Health Care — Website
+# Varnika Healthcare — Orthopaedic Clinic website
 
-A modern, responsive, interactive website for **Varnika Health Care**, a multi-speciality hospital.
-It is plain HTML, CSS and JavaScript, so there is **no build step**. Open `index.html` in a browser, or upload the folder to any static host (GitHub Pages, Netlify, Vercel, Firebase Hosting, cPanel and others).
+Website for **Varnika Healthcare, Orthopaedic Clinic**, Kiramangalam, Pudukottai.
+Dr. S. Shivabharathi, MBBS, MS (Ortho), Consultant Orthopaedic Surgeon (Reg. No. 114118).
+
+The design uses a Windows Vista–style "Aero glass" theme: an aurora background, translucent blurred glass windows with title bars, glossy buttons and orb icons.
+
+It is plain HTML, CSS and JavaScript with **no build step**. Open `index.html` in a browser, or upload the folder to any static host (GitHub Pages, Netlify, Vercel, cPanel and others).
 
 ## Pages
 
-| Page | What it does |
+| Page | Contents |
 | --- | --- |
-| `index.html` | Home page with a hero section, quick actions, animated stats, departments, doctors, health packages, a BMI calculator, a testimonial carousel and FAQs |
-| `about.html` | Story, mission, vision and values, a milestone timeline, and facilities |
-| `departments.html` | Searchable, filterable list of 16 departments. Click one to see its services and specialists |
-| `doctors.html` | Search doctors by name, speciality or language. Filter by department and day available |
-| `appointment.html` | A 5-step booking form (department → doctor → date and time → details → confirm). Gives a reference number, sends the booking on WhatsApp, adds it to a calendar (.ics) and prints it. Upcoming visits are saved on the patient's device |
-| `contact.html` | Contact cards, live "open now" status, OPD timings, an enquiry form (sends by WhatsApp or email) and a Google Map |
+| `index.html` | Clinic introduction, doctor card, clinic facilities (consultation, X-ray, ECG, lab), main services, how a visit works, timings and location, FAQs |
+| `about.html` | Doctor profile with qualifications and registration number, about the clinic, what to bring, what to do outside clinic hours |
+| `services.html` | Full list of orthopaedic services with search and category tabs. Each service shows whether it is done **at the clinic** or as **surgery at a nearby hospital** |
+| `appointment.html` | Request an appointment in 4 steps: reason → date and time (5–9 PM, any day) → patient details → confirm. The request is sent to the clinic on WhatsApp |
+| `contact.html` | Address, timings with a live "open now" status, a WhatsApp message form, and a map |
 
-Every page also has:
-- Dark mode
-- A mobile menu
-- Floating WhatsApp and emergency-call buttons
-- Animations as you scroll
-- Accessible keyboard navigation
+## To do before publishing
 
-## ⚠️ Before publishing: replace the sample details
+1. **Phone and WhatsApp number:** replace the placeholder `+91 98765 43210` in `js/data.js` (`phone` and `whatsapp`). The same placeholder also appears as fallback text in the HTML pages. The script replaces it, but update it there too.
+2. **Doctor photo:** save the photo as `img/doctor.jpg`. It appears automatically. Until then, the initials "SS" are shown.
+3. **Services list:** check `SERVICES` in `js/data.js` and add or remove items so it matches exactly what the clinic offers.
 
-The phone numbers, email, address, doctor names, prices and statistics are **placeholders**.
-
-1. **`js/data.js`** is the main file to edit. Change these there and every page updates:
-   - `SITE`: name, phone, emergency phone, WhatsApp number, email, address, map location and OPD hours
-   - `DEPARTMENTS`, `DOCTORS`, `PACKAGES`, `TESTIMONIALS` and `FAQS`
-2. The numbers written directly in the HTML text, such as "since 2008", "120 beds" and the stats counters in `index.html` and `about.html`, also need updating there.
-
-## About the booking and contact forms
-
-The site has no server, so bookings are not stored in a hospital database. Instead, the patient sends the finished booking or message to the hospital's **WhatsApp** (or by email) in one tap, using the number set in `SITE.whatsapp`. If you later want bookings saved automatically, the forms can be connected to a service such as Google Forms, Formspree or Firebase.
+All clinic details (address, timings, doctor and services) are in `js/data.js`.
 
 ## Run locally
 

@@ -3,107 +3,93 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Contact Us — Varnika Health Care</title>
-  <meta name="description" content="Contact Varnika Health Care — address, phone numbers, OPD timings, 24/7 emergency line, directions and enquiry form.">
-  <meta name="theme-color" content="#0f8b8d">
+  <title>Contact — Varnika Healthcare</title>
+  <meta name="description" content="Varnika Healthcare Orthopaedic Clinic, No. 2, Annai Vaniha Valagam, Kiramangalam, opposite to Bus Terminus, Alangudi Taluk, Pudukottai 614 624. Open daily 5 PM – 9 PM.">
+  <meta name="theme-color" content="#063f78">
   <link rel="icon" href="img/logo.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
-  <script>try{var t=localStorage.getItem("vhc-theme");if(t)document.documentElement.dataset.theme=JSON.parse(t)}catch(e){}</script>
 </head>
 <body data-page="contact">
   <a class="skip-link" href="#main">Skip to content</a>
   <div data-include="header"></div>
 
   <main id="main">
-    <section class="page-hero">
+    <section class="page-title">
       <div class="container">
-        <nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a> / <span>Contact</span></nav>
-        <h1>We're here to help</h1>
-        <p>Call, message, or drop by. For a medical emergency, call our 24/7 line straight away.</p>
-        <span class="open-badge" id="open-status"></span>
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a> / Contact</nav>
+        <h1>Contact &amp; directions</h1>
+        <p>We're opposite the bus terminus in Kiramangalam.</p>
+        <span class="badge" data-open-status><span class="dot"></span> Open daily 5 PM – 9 PM</span>
       </div>
     </section>
 
-    <section class="section" style="padding-top:48px">
-      <div class="container split" style="align-items:start">
-        <div>
-          <div class="contact-cards">
-            <div class="card contact-card danger reveal">
-              <span class="fi"><svg class="ic"><use href="#i-ambulance"/></svg></span>
-              <div><h3>24/7 Emergency &amp; Ambulance</h3><a data-site="emergencyPhone" href="tel:+919876500108">+91 98765 00108</a></div>
-            </div>
-            <div class="card contact-card reveal d1">
-              <span class="fi"><svg class="ic"><use href="#i-phone"/></svg></span>
-              <div><h3>Appointments &amp; enquiries</h3><a data-site="phone" href="tel:+919876543210">+91 98765 43210</a></div>
-            </div>
-            <div class="card contact-card reveal d2">
-              <span class="fi"><svg class="ic"><use href="#i-mail"/></svg></span>
-              <div><h3>Email</h3><a data-site="email" href="mailto:care@varnikahealthcare.in">care@varnikahealthcare.in</a></div>
-            </div>
-            <div class="card contact-card reveal d3">
-              <span class="fi"><svg class="ic"><use href="#i-pin"/></svg></span>
-              <div><h3>Address</h3><p data-site="address">No. 12, Main Road, Anna Nagar, Chennai, Tamil Nadu 600040</p></div>
+    <section class="section" style="padding-top:24px">
+      <div class="container split">
+        <div style="display:grid;gap:22px">
+          <div class="glass win reveal">
+            <div class="win-title"><svg class="ic"><use href="#i-pin"/></svg><span>Address</span><span class="win-ctrls" aria-hidden="true"><i></i><i></i><i class="close"></i></span></div>
+            <div class="pane">
+              <h3 class="instruction" style="font-size:1.3rem">Varnika Healthcare — Orthopaedic Clinic</h3>
+              <p style="margin-bottom:6px">No. 2, Annai Vaniha Valagam,<br>Kiramangalam,<br>Opposite to Bus Terminus,<br>Alangudi Taluk, Pudukottai – 614 624</p>
+              <p style="margin:0">Phone: <a data-site="phone" href="tel:+919876543210">+91 98765 43210</a></p>
+              <div class="pane-foot">
+                <a class="btn btn-sm" data-directions href="#" target="_blank" rel="noopener"><svg class="ic"><use href="#i-pin"/></svg> Get directions</a>
+                <a class="btn btn-green btn-sm" data-tel href="tel:+919876543210"><svg class="ic"><use href="#i-phone"/></svg> Call</a>
+              </div>
             </div>
           </div>
-
-          <div class="card reveal" style="margin-top:16px">
-            <h3 style="display:flex;align-items:center;gap:10px"><svg class="ic" style="color:var(--brand)"><use href="#i-clock"/></svg> OPD timings</h3>
-            <table class="hours"><tbody id="hours-table"></tbody></table>
+          <div class="glass win reveal">
+            <div class="win-title"><svg class="ic"><use href="#i-clock"/></svg><span>Clinic timings</span><span class="win-ctrls" aria-hidden="true"><i></i><i></i><i class="close"></i></span></div>
+            <div class="pane">
+              <table class="kv"><tbody id="hours-table"></tbody></table>
+              <div class="notice" style="margin-top:14px">
+                <svg class="ic"><use href="#i-alert"/></svg>
+                <span>Not a 24-hour emergency service. Outside clinic hours, go to the nearest hospital emergency department or call <strong>108</strong>.</span>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div class="card reveal">
-          <h2 style="font-size:1.8rem">Send us a message</h2>
-          <p class="muted">We usually reply within a few working hours.</p>
-          <form id="contact-form" novalidate>
-            <div class="form-grid">
-              <div class="field">
-                <label for="c-name">Your name <span class="req">*</span></label>
-                <input id="c-name" name="name" autocomplete="name" data-validate="required">
-                <span class="err">Please enter your name.</span>
+        <div class="glass win reveal">
+          <div class="win-title"><svg class="ic"><use href="#i-chat"/></svg><span>Send a message</span><span class="win-ctrls" aria-hidden="true"><i></i><i></i><i class="close"></i></span></div>
+          <div class="pane">
+            <h2>Send us a message</h2>
+            <p class="muted">Your message will open in WhatsApp, ready to send to the clinic.</p>
+            <form id="contact-form" novalidate>
+              <div class="form-grid">
+                <div class="field">
+                  <label for="c-name">Your name <span class="req">*</span></label>
+                  <input class="input" id="c-name" name="name" autocomplete="name" data-validate="required">
+                  <span class="err">Please enter your name.</span>
+                </div>
+                <div class="field">
+                  <label for="c-phone">Mobile number <span class="req">*</span></label>
+                  <input class="input" id="c-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" data-validate="required phone">
+                  <span class="err">Enter a valid 10-digit mobile number.</span>
+                </div>
+                <div class="field full">
+                  <label for="c-topic">Topic</label>
+                  <select class="input" id="c-topic" name="topic">
+                    <option>General question</option>
+                    <option>Appointment</option>
+                    <option>X-ray / ECG / lab test</option>
+                    <option>Surgery enquiry</option>
+                    <option>Follow-up</option>
+                  </select>
+                </div>
+                <div class="field full">
+                  <label for="c-message">Message <span class="req">*</span></label>
+                  <textarea class="input" id="c-message" name="message" data-validate="required"></textarea>
+                  <span class="err">Please write a short message.</span>
+                </div>
               </div>
-              <div class="field">
-                <label for="c-phone">Mobile number <span class="req">*</span></label>
-                <input id="c-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" data-validate="required phone">
-                <span class="err">Enter a valid 10-digit mobile number.</span>
+              <div class="pane-foot">
+                <button class="btn btn-green" type="submit"><svg class="ic"><use href="#i-send"/></svg> Send on WhatsApp</button>
               </div>
-              <div class="field full">
-                <label for="c-email">Email <span class="muted">(optional)</span></label>
-                <input id="c-email" name="email" type="email" autocomplete="email" data-validate="email">
-                <span class="err">That email doesn't look right.</span>
-              </div>
-              <div class="field full">
-                <label for="c-topic">Topic</label>
-                <select id="c-topic" name="topic">
-                  <option>General enquiry</option>
-                  <option>Appointment</option>
-                  <option>Health check-up package</option>
-                  <option>Insurance / billing</option>
-                  <option>Lab reports</option>
-                  <option>Feedback</option>
-                  <option>Careers</option>
-                </select>
-              </div>
-              <div class="field full">
-                <label for="c-message">Message <span class="req">*</span></label>
-                <textarea id="c-message" name="message" data-validate="required"></textarea>
-                <span class="err">Please write a short message.</span>
-              </div>
-            </div>
-            <button class="btn btn-primary btn-block" type="submit" style="margin-top:22px"><svg class="ic"><use href="#i-send"/></svg> Send message</button>
-          </form>
-          <div id="contact-done" class="success" hidden>
-            <div class="success-icon"><svg class="ic"><use href="#i-check"/></svg></div>
-            <h3 style="font-size:1.4rem">Almost there!</h3>
-            <p class="muted">Choose how you'd like to send your message to us:</p>
-            <div class="btns">
-              <a class="btn btn-primary" id="contact-wa" href="#" target="_blank" rel="noopener"><svg class="ic"><use href="#i-chat"/></svg> WhatsApp</a>
-              <a class="btn btn-ghost" id="contact-mail" href="#"><svg class="ic"><use href="#i-mail"/></svg> Email</a>
-              <button class="btn btn-ghost" type="button" id="contact-again">Edit message</button>
-            </div>
+            </form>
           </div>
         </div>
       </div>
@@ -111,7 +97,10 @@
 
     <section class="section" style="padding-top:0">
       <div class="container">
-        <div class="map reveal" id="map"></div>
+        <div class="glass win reveal">
+          <div class="win-title"><svg class="ic"><use href="#i-pin"/></svg><span>Map — Kiramangalam Bus Terminus</span><span class="win-ctrls" aria-hidden="true"><i></i><i></i><i class="close"></i></span></div>
+          <div class="map" id="map"></div>
+        </div>
       </div>
     </section>
   </main>

@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Services — Varnika Healthcare</title>
+  <meta name="description" content="Orthopaedic services at Varnika Healthcare: fracture and trauma care, joint, spine, sports, hand, foot and children's orthopaedics, clinic procedures, and surgeries at a nearby hospital.">
+  <meta name="theme-color" content="#063f78">
+  <link rel="icon" href="img/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="services">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div data-include="header"></div>
+
+  <main id="main">
+    <section class="page-title">
+      <div class="container">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a> / Services</nav>
+        <h1>Orthopaedic services</h1>
+        <p>Care for bones, joints, muscles and spine, from children to older adults. Each service shows whether it is done at the clinic or as surgery at a nearby hospital.</p>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top:20px">
+      <div class="container">
+        <div class="section-head" style="margin-bottom:24px"><h2>At the clinic</h2></div>
+        <div class="grid grid-4" id="facility-grid"></div>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top:0">
+      <div class="container">
+        <div class="section-head" style="margin-bottom:24px"><h2>Conditions &amp; treatments</h2></div>
+        <div class="toolbar">
+          <div class="search">
+            <svg class="ic" aria-hidden="true"><use href="#i-search"/></svg>
+            <label class="sr-only" for="service-search">Search services</label>
+            <input id="service-search" type="search" placeholder="Search, e.g. “knee”, “fracture”, “clubfoot”">
+          </div>
+        </div>
+        <div class="tabs" id="service-tabs" role="group" aria-label="Filter services" style="margin-bottom:24px"></div>
+        <div class="grid grid-3" id="service-grid"></div>
+        <div class="notice info" style="margin-top:28px">
+          <svg class="ic"><use href="#i-info"/></svg>
+          <span>Don't see your problem here? This list covers the most common conditions. We see all bone, joint and injury problems, so please <a href="contact.html">contact us</a> or come to the clinic.</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div data-include="footer"></div>
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
