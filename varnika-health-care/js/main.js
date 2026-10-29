@@ -81,11 +81,9 @@
     return `${hh % 12 || 12}${mm ? ":" + String(mm).padStart(2, "0") : ""} ${hh >= 12 ? "PM" : "AM"}`;
   };
   const HOURS_TEXT = `${fmtTime(SITE.hours[0])} – ${fmtTime(SITE.hours[1])}`;
-  const isOpenNow = () => {
-    const now = new Date();
-    const m = now.getHours() * 60 + now.getMinutes();
-    return m >= toMin(SITE.hours[0]) && m < toMin(SITE.hours[1]);
-  };
+  const LAB_TEXT = `${fmtTime(SITE.labHours[0])} – ${fmtTime(SITE.labHours[1])}`;
+  const nowMinutes = () => { const now = new Date(); return now.getHours() * 60 + now.getMinutes(); };
+  const inHours = (h, m = nowMinutes()) => m >= toMin(h[0]) && m < toMin(h[1]);
 
   /* ---------------------------------------------------------------- Layout */
   const NAV = [
@@ -152,7 +150,8 @@
               <h4>${t("visitUs")}</h4>
               <ul class="footer-contact">
                 <li>${icon("pin")}<span>${L(SITE.address)}<br><a href="${SITE.mapLink}" target="_blank" rel="noopener">${t("openMaps")}</a></span></li>
-                <li>${icon("clock")}<span>${t("everyDayHours", { h: HOURS_TEXT })}</span></li>
+                <li>${icon("clock")}<span>${t("everyDayHours", { h: HOURS_TEXT, lab: LAB_TEXT })}</span></li>
+                <li><span class="g-logo" aria-hidden="true">G</span><a href="${SITE.googleProfile}" target="_blank" rel="noopener">${t("googleProfile")}</a></li>
                 <li>${icon("phone")}<a href="${telHref(SITE.phone)}">${SITE.phone}</a></li>
               </ul>
             </div>
@@ -180,6 +179,8 @@
     });
     $$("[data-doctor]").forEach((el) => { el.textContent = L(SITE.doctor[el.dataset.doctor]); });
     $$("[data-hours]").forEach((el) => { el.textContent = HOURS_TEXT; });
+    $$("[data-lab-hours]").forEach((el) => { el.textContent = LAB_TEXT; });
+    $$("[data-google]").forEach((a) => { a.href = SITE.googleProfile; });
     $$("[data-wa]").forEach((el) => { el.href = waHref(t("waHello")); });
     $$("[data-tel]").forEach((el) => { el.href = telHref(SITE.phone); });
     $$("[data-directions]").forEach((a) => { a.href = SITE.mapLink; });
@@ -252,17 +253,24 @@
     });
   }
 
+  // Open = the lab is open; the long label also says whether the doctor is in yet.
   function renderOpenStatus() {
-    const open = isOpenNow();
+    const open = inHours(SITE.labHours);
+    const doctorIn = inHours(SITE.hours);
     $$("[data-open-status]").forEach((el) => {
       el.classList.toggle("closed", !open);
       const short = el.dataset.openStatus === "short";
-      el.innerHTML = `<span class="dot"></span> ${open ? t(short ? "openShort" : "openNow", { t: fmtTime(SITE.hours[1]) }) : t(short ? "closedShort" : "closedNow", { t: fmtTime(SITE.hours[0]) })}`;
+      const text = !open ? t(short ? "closedShort" : "closedNow", { t: fmtTime(SITE.labHours[0]) })
+        : short ? t("openShort")
+        : doctorIn ? t("openDoctor", { t: fmtTime(SITE.hours[1]) }) : t("openLab", { t: fmtTime(SITE.hours[0]) });
+      el.innerHTML = `<span class="dot"></span> ${text}`;
     });
     $$("[data-hours-table]").forEach((table) => {
       const today = new Date().getDay();
-      table.innerHTML = [1, 2, 3, 4, 5, 6, 0].map((d) => `<tr class="${d === today ? "today" : ""}"><th>${I.dayLong(d)}${d === today ? t("todayMark") : ""}</th><td>${HOURS_TEXT}</td></tr>`).join("")
-        + `<tr><th>${t("holidays")}</th><td>${HOURS_TEXT}</td></tr>`;
+      const row = (th, cls) => `<tr class="${cls || ""}"><th>${th}</th><td class="lab">${LAB_TEXT}</td><td>${HOURS_TEXT}</td></tr>`;
+      table.innerHTML = `<tr class="head"><th>${t("colDay")}</th><td class="lab">${t("colLab")}</td><td>${t("colDoctor")}</td></tr>`
+        + [1, 2, 3, 4, 5, 6, 0].map((d) => row(`${I.dayLong(d)}${d === today ? t("todayMark") : ""}`, d === today ? "today" : "")).join("")
+        + row(t("holidays"));
     });
   }
 
@@ -341,7 +349,7 @@
       root.innerHTML = window.FAQS.map((f, i) => `
         <details class="reveal${root.dataset.drawn ? " in" : ""}"${i === (open < 0 && !root.dataset.drawn ? 0 : open) ? " open" : ""}>
           <summary>${L(f.q)}${icon("chevron-down")}</summary>
-          <div class="faq-a">${L(f.a).replace(/\{hours\}/g, HOURS_TEXT)}</div>
+          <div class="faq-a">${L(f.a).replace(/\{hours\}/g, HOURS_TEXT).replace(/\{lab\}/g, LAB_TEXT).replace(/\{labStart\}/g, fmtTime(SITE.labHours[0]))}</div>
         </details>`).join("");
       root.dataset.drawn = "1";
     };
@@ -439,6 +447,7 @@
     // service answers (or when it is off or unreachable) the request is sent on WhatsApp.
     const api = window.BookingAPI;
     const service = { online: false, closed: false, lastDate: null };
+    const upi = { fee: 0, id: null, name: null }; // the hospital's UPI, when it takes an online fee
     const taken = {}; // date -> Set of "HH:MM" that are full or past
     const useOnline = () => service.online && !service.closed;
     if (api) {
@@ -446,6 +455,9 @@
         service.online = true;
         service.closed = !o.accepting;
         service.lastDate = o.last_date || null;
+        if (o.fee > 0 && o.upi_id) Object.assign(upi, { fee: o.fee, id: o.upi_id, name: o.upi_name || SITE.name });
+        renderMine();
+        drawPayment();
         $("#booking-closed").hidden = !service.closed;
         if (state.step === 1) renderDates();
       }).catch(() => { service.online = false; });
@@ -619,7 +631,12 @@
 
       // No answer, a broken answer, or booking switched off: send it on WhatsApp instead.
       if (!r || typeof r.ok !== "boolean" || r.error === "closed") { finish(appt, data, false); return; }
-      if (r.ok) { finish(appt, data, true); return; }
+      if (r.ok) {
+        appt.fee = r.fee || 0;
+        appt.payStatus = r.payment_status || "none";
+        finish(appt, data, true);
+        return;
+      }
 
       if (r.error in FIELD_ERRORS) {
         state.step = 2;
@@ -639,7 +656,7 @@
     // sent = the hospital's OPD software has the request; otherwise the patient sends it on WhatsApp.
     function finish(appt, data, sent) {
       const all = store.get("vhc-appointments", []);
-      all.push({ ...appt, sent });
+      all.push({ ...appt, sent, phone: data.phone, data: { age: data.age, gender: data.gender, notes: data.notes || "" } });
       store.set("vhc-appointments", all);
       last = { appt, data, sent };
       drawSuccess();
@@ -660,7 +677,60 @@
       $("#success-wa").href = waHref(msg);
       $("#success-wa").hidden = sent;
       $("#success-ics").onclick = () => downloadIcs(appt);
+      drawPayment();
     }
+
+    // The OPD fee by UPI (when the hospital takes one): open the UPI app or scan the QR,
+    // then send the 12-digit UTR, which reception checks against the bank / UPI app.
+    const payBox = $("#pay-box"), payError = $("#pay-error");
+    const showPayError = (msg) => { payError.hidden = !msg; $("span", payError).textContent = msg || ""; };
+    function drawPayment() {
+      const a = last && last.sent ? last.appt : null;
+      const due = !!(a && a.fee > 0 && upi.id && (a.payStatus === "pending" || a.payStatus === "rejected"));
+      payBox.hidden = !due;
+      $("#pay-done").hidden = !(a && a.fee > 0 && (a.payStatus === "submitted" || a.payStatus === "verified"));
+      if (!due) return;
+      const link = `upi://pay?pa=${encodeURIComponent(upi.id)}&pn=${encodeURIComponent(upi.name)}&am=${a.fee}.00&cu=INR&tn=${encodeURIComponent("OPD " + a.ref)}`;
+      $("#pay-amount").textContent = `₹${a.fee}`;
+      $("#pay-upi").href = link;
+      $("#pay-upi-id").textContent = upi.id;
+      $("#pay-name").textContent = upi.name;
+      const qrBox = $("#pay-qr");
+      if (qrBox.dataset.link !== link && window.qrcode) {
+        const qr = window.qrcode(0, "M");
+        qr.addData(link);
+        qr.make();
+        qrBox.innerHTML = qr.createSvgTag({ cellSize: 4, margin: 2, scalable: true });
+        qrBox.dataset.link = link;
+      }
+    }
+    $("#pay-copy").addEventListener("click", () => {
+      if (navigator.clipboard) navigator.clipboard.writeText(upi.id).then(() => toast(t("copied")), () => undefined);
+    });
+    $("#pay-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!last || sending) return;
+      const a = last.appt;
+      const utr = $("#pay-utr").value.replace(/\D/g, "");
+      if (!/^\d{12}$/.test(utr)) { showPayError(t("utrBad")); $("#pay-utr").focus(); return; }
+      showPayError("");
+      const btn = $("#pay-send");
+      btn.disabled = sending = true;
+      let r = null;
+      try { r = await api.submitPayment(a.ref, a.phone || last.data.phone, utr); } catch { r = null; }
+      btn.disabled = sending = false;
+      if (r && r.ok) {
+        a.payStatus = r.payment_status || "submitted";
+        store.set("vhc-appointments", store.get("vhc-appointments", []).map((x) => (x.ref === a.ref ? { ...x, payStatus: a.payStatus } : x)));
+        drawPayment();
+        renderMine();
+        $("#pay-done").scrollIntoView({ block: "nearest", behavior: "smooth" });
+      } else if (r && r.error) {
+        showPayError(I.errorText(r.error, r.message));
+      } else {
+        showPayError(t("payFailed"));
+      }
+    });
     $("#book-another").addEventListener("click", () => {
       Object.assign(state, { step: 0, reason: null, date: null, time: null });
       last = null;
@@ -675,12 +745,25 @@
       const todayKey = dateKey(new Date());
       const list = store.get("vhc-appointments", []).filter((a) => a.date >= todayKey).sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
       $("#my-appts-box").hidden = !list.length;
-      wrap.innerHTML = list.map((a) => `<div class="appt-row${a.sent ? " sent" : ""}">
-        <div class="info"><strong>${prettyDate(a.date)} · ${fmtTime(a.time)}</strong><small>${escapeHtml(a.name)} · ${escapeHtml(a.reason)} · ${escapeHtml(a.ref)}${a.sent ? t("sentTag") : ""}</small></div>
+      const due = (a) => a.sent && a.fee > 0 && (a.payStatus === "pending" || a.payStatus === "rejected");
+      wrap.innerHTML = list.map((a) => `<div class="appt-row${a.sent ? " sent" : ""}${due(a) ? " due" : ""}">
+        <div class="info"><strong>${prettyDate(a.date)} · ${fmtTime(a.time)}</strong><small>${escapeHtml(a.name)} · ${escapeHtml(a.reason)} · ${escapeHtml(a.ref)}${a.sent ? t("sentTag") : ""}${a.fee > 0 ? t(due(a) ? "payDue" : "paySent") : ""}</small>
+          ${due(a) && upi.id ? `<button class="btn btn-gold btn-sm pay-again" type="button" data-pay="${escapeHtml(a.ref)}">${t("payNow", { fee: a.fee })}</button>` : ""}</div>
         <button class="icon-btn" type="button" data-cancel="${escapeHtml(a.ref)}" aria-label="${t("remove")} ${escapeHtml(a.ref)}">${icon("trash")}</button>
       </div>`).join("");
     }
     $("#my-appts").addEventListener("click", (e) => {
+      const p = e.target.closest("[data-pay]");
+      if (p) {
+        const a = store.get("vhc-appointments", []).find((x) => x.ref === p.dataset.pay);
+        if (!a) return;
+        last = { appt: a, data: { phone: a.phone, ...(a.data || {}) }, sent: true };
+        state.step = 4;
+        drawSuccess();
+        show();
+        scrollToTop();
+        return;
+      }
       const b = e.target.closest("[data-cancel]");
       if (!b || !window.confirm(t("removeAsk"))) return;
       store.set("vhc-appointments", store.get("vhc-appointments", []).filter((a) => a.ref !== b.dataset.cancel));
@@ -703,7 +786,7 @@
       "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Varnika Speciality Hospital//Appointments//EN", "BEGIN:VEVENT",
       `UID:${a.ref}@${SITE.domain}`, `DTSTAMP:${fmt(new Date())}`, `DTSTART:${fmt(start)}`, `DTEND:${fmt(end)}`,
       `SUMMARY:${SITE.name} — ${SITE.doctor.name.en}`,
-      `DESCRIPTION:Ref ${a.ref}. ${a.reason}. Come 10 minutes early. Bring earlier X-rays and reports. Call ${SITE.phone} to change.`,
+      `DESCRIPTION:Ref ${a.ref}. ${a.reason}. Please arrive 15 minutes early for vitals and tests; if late, you join the regular walk-in queue. Lab and X-ray open from ${fmtTime(SITE.labHours[0])}. Bring earlier X-rays and reports. Call ${SITE.phone} to change.`,
       `LOCATION:${SITE.address.en.replace(/,/g, "\\,")}`,
       "END:VEVENT", "END:VCALENDAR",
     ].join("\r\n");

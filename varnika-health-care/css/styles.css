@@ -312,7 +312,15 @@ html[lang="ta"] .svc-group { text-transform: none; letter-spacing: 0; }
 .hours, .kv { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
 .hours th, .hours td, .kv th, .kv td { padding: 10px 6px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
 .hours th, .kv th { font-weight: 600; color: var(--muted); width: 45%; }
-.hours td { font-weight: 700; color: var(--navy); text-align: right; }
+.hours td { font-weight: 700; color: var(--navy); text-align: right; white-space: nowrap; }
+.hours td.lab { color: var(--c-lab, #0e9a8c); }
+.hours th { width: auto; }
+.hours tr.head th, .hours tr.head td { font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); font-weight: 700; white-space: normal; }
+html[lang="ta"] .hours tr.head th, html[lang="ta"] .hours tr.head td { text-transform: none; letter-spacing: 0; }
+@media (max-width: 420px) { .hours th, .hours td { padding: 9px 4px; font-size: .88rem; } }
+.g-logo { display: inline-grid; place-items: center; width: 20px; height: 20px; flex: none; border-radius: 50%; font: 700 .8rem/1 Arial, sans-serif; color: #fff; background: conic-gradient(#ea4335 0 25%, #fbbc05 0 50%, #34a853 0 75%, #4285f4 0); }
+.doctor-hours.lab { margin-top: 4px; color: #0b7c70; }
+.doctor-hours.lab .ic { color: #0e9a8c; }
 .hours tr.today { background: var(--gold-soft); }
 .hours tr.today th { color: var(--gold-ink); }
 .hours tr.today th, .hours tr.today td { border-bottom-color: #f2dc8f; }
@@ -457,6 +465,29 @@ html[lang="ta"] .summary dt { text-transform: none; letter-spacing: 0; }
 .success h2 { color: var(--green); }
 .ref { display: inline-block; margin: 6px 0 16px; padding: 8px 20px; border-radius: 12px; font: 700 1.35rem Consolas, ui-monospace, monospace; letter-spacing: .1em; color: var(--navy); background: var(--gold-soft); border: 2px dashed var(--gold); }
 .success-note { max-width: 520px; margin: 0 auto 6px; color: var(--muted); }
+/* UPI fee: gold = pay, green = sent */
+.pay-box { margin: 22px auto 0; max-width: 640px; text-align: left; padding: 20px; border-radius: 16px; border: 2px solid var(--gold); background: linear-gradient(180deg, #fffdf3, var(--gold-soft)); box-shadow: 0 10px 26px rgb(245 179 1 / 18%); animation: rise .45s ease; }
+.pay-title { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 12px; font-size: 1.12rem; }
+.pay-amount { padding: 2px 14px; border-radius: 999px; background: var(--navy); color: var(--gold-2); font-size: 1.15rem; }
+.pay-steps { margin: 0; padding-left: 22px; display: grid; gap: 16px; }
+.pay-steps > li > strong { color: var(--navy); }
+.pay-row { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; margin-top: 10px; }
+.pay-qr { width: 168px; height: 168px; flex: none; padding: 6px; border-radius: 12px; background: #fff; border: 1px solid var(--line); }
+.pay-qr svg { width: 100%; height: 100%; }
+.pay-how { flex: 1; min-width: 220px; display: grid; gap: 8px; justify-items: start; }
+.pay-how p { margin: 0; font-size: .9rem; }
+.upi-id { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.upi-id code { padding: 6px 12px; border-radius: 8px; background: #fff; border: 1px dashed var(--gold); font: 700 1rem Consolas, ui-monospace, monospace; color: var(--navy); overflow-wrap: anywhere; }
+.pay-form { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+.pay-form .input { flex: 1 1 200px; font: 700 1.1rem Consolas, ui-monospace, monospace; letter-spacing: .08em; }
+.pay-help { margin: 12px 0 0; font-size: .86rem; }
+#pay-error { margin-top: 12px; }
+.notice.ok { color: #0d5c33; background: var(--green-soft); border-color: #9fdcb9; }
+.notice.ok .ic { color: var(--green); }
+.pay-done { max-width: 640px; margin: 20px auto 0; text-align: left; animation: rise .45s ease; }
+.appt-row.due .info { border-left-color: var(--gold); }
+.pay-again { margin-top: 6px; min-height: 32px; padding: 4px 12px; }
+@media (max-width: 520px) { .pay-qr { width: 140px; height: 140px; } .pay-row { justify-content: center; } .pay-how { justify-items: stretch; } }
 .visit-tips { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 26px; text-align: left; }
 .visit-tips section { padding: 16px 18px; border-radius: 14px; border: 1px solid #b8d2f5; background: var(--blue-soft); color: #133d74; font-size: .93rem; }
 .visit-tips section.ta { border-color: #f0d27a; background: var(--gold-soft); color: #4b3700; }

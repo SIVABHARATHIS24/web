@@ -35,7 +35,9 @@
     options: () => rpc("website_booking_options", {}),
     // ["17:30", "18:00"]: times on that date that can no longer be booked.
     takenSlots: (date) => rpc("website_taken_slots", { booking_date: date }),
-    // { ok: true, ref, status, duplicate } or { ok: false, error, message }
+    // { ok: true, ref, status, duplicate, fee, payment_status } or { ok: false, error, message }
     book: (booking) => rpc("website_book_appointment", booking, 20000),
+    // The patient paid the OPD fee by UPI: { ok: true, payment_status } or { ok: false, error, message }
+    submitPayment: (ref, phone, utr) => rpc("website_submit_payment", { ref, phone, utr }, 20000),
   };
 })();

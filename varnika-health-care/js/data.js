@@ -19,13 +19,17 @@ window.SITE = {
     ta: "எண் 2, அன்னை வனிதா வளாகம், கீரமங்கலம், பேருந்து நிலையம் எதிரில், ஆலங்குடி வட்டம், புதுக்கோட்டை – 614 624",
   },
   addressShort: { en: "Opp. Bus Stand, Keeramangalam", ta: "பேருந்து நிலையம் எதிரில், கீரமங்கலம்" },
-  // Google Maps pin for the hospital, used by every "Get directions" button.
+  // Google Business Profile (Google Maps listing), used by every "Get directions" button.
   mapLink: "https://maps.app.goo.gl/VpykLbZAs5YMKypq6",
+  googleProfile: "https://www.google.com/maps?cid=2108018987665484129",
   // Used for the embedded map on the Contact page. For an exact pin, replace
   // with the hospital's coordinates, e.g. "10.4050,79.0500".
-  mapQuery: "Keeramangalam Bus Stand, Pudukkottai 614624",
+  mapQuery: "VARNIKA HEALTH CARE, Keeramangalam North, Tamil Nadu 614624",
   // Same hours every day of the week, including Sundays and holidays.
+  // hours = doctor consultation (online booking times); labHours = laboratory, X-ray and ECG.
+  // Patients may come for tests any time from labHours[0], before the doctor arrives.
   hours: ["17:00", "21:00"],
+  labHours: ["08:00", "21:00"],
   // Online booking goes straight into the hospital's OPD software. This key is
   // meant to be public: it can only send a booking request and see which times
   // are full. It cannot read any patient data. Never put a secret key here.
@@ -140,15 +144,16 @@ window.SERVICES = [
 // {hours} is replaced with the opening hours, e.g. "5 PM – 9 PM".
 window.FAQS = [
   { q: { en: "What are the timings?", ta: "நேரம் என்ன?" },
-    a: { en: "Open {hours} every day, including Sundays and holidays.", ta: "தினமும் {hours}, ஞாயிறு மற்றும் விடுமுறை நாட்களிலும் திறந்திருக்கும்." } },
+    a: { en: "Laboratory, X-ray and ECG: {lab}. Doctor consultation: {hours}. Every day, including Sundays and holidays. You can come for your tests any time from {labStart}, so the reports are ready when the doctor sees you.",
+         ta: "ஆய்வகம், எக்ஸ்-ரே, ECG: {lab}. மருத்துவர் ஆலோசனை: {hours}. ஞாயிறு, விடுமுறை நாட்கள் உட்பட தினமும். பரிசோதனைகளுக்கு {labStart} முதல் எப்போது வேண்டுமானாலும் வரலாம்; மருத்துவர் பார்க்கும்போது ரிப்போர்ட்டுகள் தயாராக இருக்கும்." } },
   { q: { en: "Is it open 24 hours?", ta: "24 மணி நேரமும் திறந்திருக்குமா?" },
-    a: { en: "No. We are open only {hours}. For serious injuries outside these hours, please go to the nearest hospital emergency department or call 108 for an ambulance.",
-         ta: "இல்லை. {hours} மட்டும் திறந்திருக்கும். இந்த நேரத்துக்கு வெளியே கடுமையான காயம் என்றால், அருகிலுள்ள மருத்துவமனை அவசரப் பிரிவுக்குச் செல்லவும் அல்லது 108 ஆம்புலன்ஸை அழைக்கவும்." } },
+    a: { en: "No. We are open {lab} (doctor {hours}). For serious injuries outside these hours, please go to the nearest hospital emergency department or call 108 for an ambulance.",
+         ta: "இல்லை. {lab} மட்டும் திறந்திருக்கும் (மருத்துவர் {hours}). இந்த நேரத்துக்கு வெளியே கடுமையான காயம் என்றால், அருகிலுள்ள மருத்துவமனை அவசரப் பிரிவுக்குச் செல்லவும் அல்லது 108 ஆம்புலன்ஸை அழைக்கவும்." } },
   { q: { en: "Do I need an appointment?", ta: "முன்பதிவு அவசியமா?" },
-    a: { en: "You can walk in during opening hours. Booking a time online helps us plan and can reduce your waiting time.",
-         ta: "திறந்திருக்கும் நேரத்தில் நேரடியாகவும் வரலாம். ஆன்லைனில் முன்பதிவு செய்தால் காத்திருக்கும் நேரம் குறையும்." } },
+    a: { en: "You can walk in during opening hours. Booking a time online helps us plan and can reduce your waiting time. If you book, please arrive 15 minutes before your time for vitals and tests; if you are late, you will be seen in the regular walk-in queue.",
+         ta: "திறந்திருக்கும் நேரத்தில் நேரடியாகவும் வரலாம். ஆன்லைனில் முன்பதிவு செய்தால் காத்திருக்கும் நேரம் குறையும். முன்பதிவு செய்தவர்கள் உங்கள் நேரத்துக்கு 15 நிமிடம் முன்பே வரவும்; தாமதமானால் வழக்கமான நேரடி வருகை (walk-in) வரிசையில் பார்க்கப்படுவீர்கள்." } },
   { q: { en: "Can I get an X-ray, ECG or blood test here?", ta: "எக்ஸ்-ரே, ECG, இரத்தப் பரிசோதனை இங்கே உண்டா?" },
-    a: { en: "Yes. X-ray, ECG and basic laboratory investigations are done right here.", ta: "ஆம். எக்ஸ்-ரே, ECG மற்றும் அடிப்படை ஆய்வகப் பரிசோதனைகள் இங்கேயே செய்யப்படும்." } },
+    a: { en: "Yes. X-ray, ECG and basic laboratory investigations are done right here, {lab}, even before the doctor arrives.", ta: "ஆம். எக்ஸ்-ரே, ECG மற்றும் அடிப்படை ஆய்வகப் பரிசோதனைகள் {lab} இங்கேயே செய்யப்படும் — மருத்துவர் வருவதற்கு முன்பும்." } },
   { q: { en: "Where are operations done?", ta: "அறுவை சிகிச்சை எங்கே செய்யப்படும்?" },
     a: { en: "There is no operation theatre here. When surgery is needed, the doctor performs it at a nearby hospital and explains the plan and arrangements during your consultation.",
          ta: "இங்கே அறுவை அரங்கு (Operation theatre) இல்லை. அறுவை தேவைப்பட்டால், மருத்துவரே அருகிலுள்ள மருத்துவமனையில் செய்வார்; திட்டம் மற்றும் ஏற்பாடுகளை ஆலோசனையின்போது விளக்குவார்." } },
