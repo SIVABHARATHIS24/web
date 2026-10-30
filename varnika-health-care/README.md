@@ -50,6 +50,10 @@ Open **varnikahospital.in/admin** on the phone and sign in with the doctor's OPD
 
 The database checks that only the doctor can post or upload (`website_post_save`, `website_post_delete` and the storage policies). The website reads published posts through `website_posts`. The `_headers` CSP allows images from Supabase and `i.ytimg.com`, and frames from `www.youtube-nocookie.com`.
 
+## After changing a file
+
+Cloudflare tells browsers to keep images, scripts and styles for 4 hours. The pages link them with a version (`css/styles.css?v=3`, `img/logo.svg?v=2`). When you change one of those files, raise its number in every `.html` file (and in `js/main.js` for the logo), so visitors get the new file straight away.
+
 ## Publishing on Cloudflare Pages (recommended, free)
 
 1. Sign in at dash.cloudflare.com → **Workers & Pages → Create → Pages → Connect to Git**, and choose this repository and branch.
