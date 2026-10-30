@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Book an Appointment — Varnika Speciality Hospital</title>
+  <meta name="description" content="Book online with Dr. S. Sivabharathi at Varnika Speciality Hospital, Keeramangalam. Doctor 5–9 PM, Monday to Saturday. Lab, X-ray and ECG from 8 AM daily.">
+  <meta name="theme-color" content="#0e2a5c">
+  <link rel="canonical" href="https://varnikahospital.in/appointment">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Varnika Speciality Hospital">
+  <meta property="og:title" content="Book an Appointment — Varnika Speciality Hospital">
+  <meta property="og:description" content="Book online with Dr. S. Sivabharathi at Varnika Speciality Hospital, Keeramangalam. Doctor 5–9 PM, Monday to Saturday. Lab, X-ray and ECG from 8 AM daily.">
+  <meta property="og:url" content="https://varnikahospital.in/appointment">
+  <meta property="og:image" content="https://varnikahospital.in/img/og-image.jpg?v=3">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="img/logo.svg?v=2" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png?v=2">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Noto+Sans:wght@400;500;600;700&family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css?v=7">
+</head>
+<body data-page="appointment">
+  <a class="skip-link" href="#main" data-i18n="c.skip">Skip to content</a>
+  <div data-include="header"></div>
+
+  <main id="main">
+    <section class="page-hero">
+      <div class="container">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="index.html" data-i18n="nav.home">Home</a> / <span data-i18n="nav.book">Appointment</span></nav>
+        <h1 data-i18n="bk.title">Book an appointment</h1>
+        <p data-i18n="bk.lead">Choose a time to see the doctor, <span data-hours>5 PM – 9 PM</span>, Monday to Saturday (no doctor on Sundays). For lab, X-ray and ECG you can come earlier, any time <span data-lab-hours>8 AM – 9 PM</span>.</p>
+      </div>
+      <svg class="wave" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true"><path d="M0 40c240 50 480 50 720 20s480-60 720-10v40H0z"/></svg>
+    </section>
+
+    <section class="section first">
+      <div class="container booking" id="booking">
+        <div class="card wizard">
+          <ol class="progress" aria-label="Progress">
+            <li><i>1</i><span data-i18n="bk.st1">Reason</span></li>
+            <li><i>2</i><span data-i18n="bk.st2">Date &amp; time</span></li>
+            <li><i>3</i><span data-i18n="bk.st3">Patient</span></li>
+            <li><i>4</i><span data-i18n="bk.st4">Confirm</span></li>
+          </ol>
+
+          <div class="notice warn" id="booking-closed" hidden>
+            <svg class="ic" aria-hidden="true"><use href="#i-alert"/></svg>
+            <span data-i18n="bk.closed">Online booking is closed just now. You can still send your request on WhatsApp, call the hospital, or walk in during opening hours.</span>
+          </div>
+
+          <div class="step-panel">
+            <h2 data-i18n="bk.q1">What is the visit for?</h2>
+            <div class="pick-grid" id="pick-reason"></div>
+          </div>
+
+          <div class="step-panel">
+            <h2 data-i18n="bk.q2">Choose a date and time</h2>
+            <p class="muted"><span data-i18n="bk.open">Doctor Mon – Sat</span> · <span data-hours>5 PM – 9 PM</span></p>
+            <div class="date-strip" id="date-strip"></div>
+            <div id="slot-wrap"></div>
+          </div>
+
+          <div class="step-panel">
+            <h2 data-i18n="bk.q3">Patient details</h2>
+            <form id="patient-form" novalidate>
+              <div class="form-grid">
+                <div class="field full">
+                  <label for="p-name"><span data-i18n="bk.name">Patient's name</span> <span class="req">*</span></label>
+                  <input class="input" id="p-name" name="name" autocomplete="name" maxlength="100" data-validate="required">
+                  <span class="err" data-i18n="bk.nameErr">Please enter the patient's name.</span>
+                </div>
+                <div class="field">
+                  <label for="p-phone"><span data-i18n="bk.phone">Mobile number</span> <span class="req">*</span></label>
+                  <input class="input" id="p-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="10-digit mobile number" data-i18n-placeholder="bk.phonePh" data-validate="required phone">
+                  <span class="err" data-i18n="bk.phoneErr">Enter a valid 10-digit mobile number.</span>
+                </div>
+                <div class="field">
+                  <label for="p-age"><span data-i18n="bk.age">Age</span> <span class="req">*</span></label>
+                  <input class="input" id="p-age" name="age" type="number" min="0" max="120" inputmode="numeric" data-validate="age">
+                  <span class="err" data-i18n="bk.ageErr">Enter an age between 0 and 120.</span>
+                </div>
+                <div class="field full">
+                  <span class="label" data-i18n="bk.gender">Gender</span>
+                  <div class="radios">
+                    <label><input type="radio" name="gender" value="Female" checked> <span data-i18n="g.Female">Female</span></label>
+                    <label><input type="radio" name="gender" value="Male"> <span data-i18n="g.Male">Male</span></label>
+                    <label><input type="radio" name="gender" value="Other"> <span data-i18n="g.Other">Other</span></label>
+                  </div>
+                </div>
+                <div class="field full">
+                  <label for="p-notes"><span data-i18n="bk.notes">Describe the problem</span> <span class="muted" data-i18n="bk.optional">(optional)</span></label>
+                  <textarea class="input" id="p-notes" name="notes" maxlength="1000" placeholder="e.g. Fell from a bike yesterday, right wrist pain and swelling" data-i18n-placeholder="bk.notesPh"></textarea>
+                </div>
+              </div>
+              <button type="submit" hidden></button>
+            </form>
+          </div>
+
+          <div class="step-panel">
+            <h2 data-i18n="bk.q4">Check and confirm</h2>
+            <table class="kv review" id="review"></table>
+            <div class="notice info spaced">
+              <svg class="ic" aria-hidden="true"><use href="#i-info"/></svg>
+              <span data-i18n="bk.reqNote">This is a request for your preferred time. The hospital will confirm it on WhatsApp or by phone. Please arrive <strong>15 minutes early</strong>; if you are late, you will be seen in the regular walk-in queue.</span>
+            </div>
+          </div>
+
+          <div class="step-panel">
+            <div class="success">
+              <span class="success-tick"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span>
+              <h2 id="success-title">Request ready</h2>
+              <p class="muted" id="success-when"></p>
+              <div data-i18n="bk.refNo">Reference number</div>
+              <div class="ref" id="success-ref"></div>
+              <p class="success-note" id="success-sent" hidden data-i18n="bk.sentNote"><strong>The hospital has received your request.</strong> Reception will confirm your time on WhatsApp or by phone. Please keep your phone with you.</p>
+              <p class="success-note" id="success-unsent" data-i18n="bk.unsentNote"><strong>Please send this request to the hospital on WhatsApp</strong> so we receive it. We'll confirm your time.</p>
+
+              <div class="pay-box" id="pay-box" hidden>
+                <h3 class="pay-title"><span data-i18n="pay.title">Pay the OPD fee to confirm your booking</span> <span class="pay-amount" id="pay-amount"></span></h3>
+                <ol class="pay-steps">
+                  <li>
+                    <strong data-i18n="pay.s1">Pay with any UPI app</strong>
+                    <div class="pay-row">
+                      <div class="pay-qr" id="pay-qr" role="img" aria-label="UPI QR code"></div>
+                      <div class="pay-how">
+                        <a class="btn btn-gold" id="pay-upi" href="#"><svg class="ic" aria-hidden="true"><use href="#i-phone"/></svg> <span data-i18n="pay.open">Pay with GPay / PhonePe / Paytm</span></a>
+                        <p class="muted" data-i18n="pay.or">Or scan this QR code from another phone, or pay to this UPI ID:</p>
+                        <div class="upi-id"><code id="pay-upi-id"></code> <button type="button" class="btn btn-light btn-sm" id="pay-copy" data-i18n="pay.copy">Copy</button></div>
+                        <p class="muted pay-to"><span data-i18n="pay.to">Paid to</span> <b id="pay-name"></b></p>
+                      </div>
+                    </div>
+                  </li>
+                  <li>
+                    <strong data-i18n="pay.s2">Then enter the 12-digit UTR number</strong>
+                    <p class="muted" data-i18n="pay.s2t">You will find it in the payment details of your UPI app (called UTR, UPI Ref No. or UPI Transaction ID).</p>
+                    <form class="pay-form" id="pay-form" novalidate>
+                      <label class="sr-only" for="pay-utr" data-i18n="pay.utrLabel">UTR number</label>
+                      <input class="input" id="pay-utr" inputmode="numeric" autocomplete="off" maxlength="20" placeholder="1234 5678 9012">
+                      <button class="btn btn-green" type="submit" id="pay-send"><svg class="ic" aria-hidden="true"><use href="#i-send"/></svg> <span data-i18n="pay.send">Send</span></button>
+                    </form>
+                  </li>
+                </ol>
+                <div class="notice danger" id="pay-error" role="alert" hidden>
+                  <svg class="ic" aria-hidden="true"><use href="#i-alert"/></svg>
+                  <span></span>
+                </div>
+                <p class="muted pay-help" data-i18n="pay.help">Trouble paying? Call or WhatsApp the hospital; you can also pay at the desk.</p>
+              </div>
+              <div class="notice ok pay-done" id="pay-done" hidden>
+                <svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>
+                <span data-i18n="pay.done"><strong>Payment sent for checking.</strong> Reception will check it and confirm your appointment on WhatsApp.</span>
+              </div>
+              <div class="btn-row">
+                <a class="btn btn-green" id="success-wa" href="#" target="_blank" rel="noopener"><svg class="ic" aria-hidden="true"><use href="#i-chat"/></svg> <span data-i18n="bk.sendWa">Send on WhatsApp</span></a>
+                <button class="btn btn-light" type="button" id="success-ics"><svg class="ic" aria-hidden="true"><use href="#i-download"/></svg> <span data-i18n="bk.cal">Add to calendar</span></button>
+                <button class="btn btn-light" type="button" id="success-print"><svg class="ic" aria-hidden="true"><use href="#i-printer"/></svg> <span data-i18n="bk.print">Print</span></button>
+                <button class="btn btn-light" type="button" id="book-another" data-i18n="bk.another">New booking</button>
+              </div>
+            </div>
+
+            <div class="visit-tips">
+              <section>
+                <h3><svg class="ic" aria-hidden="true"><use href="#i-clipboard"/></svg> Before you come</h3>
+                <ol>
+                  <li>Please arrive <strong>15 minutes before your appointment time</strong>, so we can check your vitals (BP, pulse, weight) and do any tests needed.</li>
+                  <li>If you are not here at your appointment time, you will be seen as a <strong>walk-in patient</strong> in the regular OPD queue.</li>
+                  <li>Need an X-ray or blood test? You can come <strong>any time from 8 AM</strong>, so the reports are ready when the doctor sees you.</li>
+                  <li>Bring your <strong>old prescriptions, X-ray / MRI / CT films and reports</strong>, and the medicines you take now.</li>
+                  <li>For an injury, wear loose clothes. Do not remove a splint or plaster yourself.</li>
+                  <li>Your time is approximate: an emergency may cause a short delay. Please wait for your name to be called.</li>
+                  <li>If you cannot come, please call or WhatsApp the hospital so the time can be given to another patient.</li>
+                </ol>
+              </section>
+              <section lang="ta" class="ta">
+                <h3><svg class="ic" aria-hidden="true"><use href="#i-clipboard"/></svg> வருவதற்கு முன்</h3>
+                <ol>
+                  <li>உங்கள் நேரத்துக்கு <strong>15 நிமிடம் முன்பே</strong> வரவும்; BP, நாடி, எடை மற்றும் தேவையான பரிசோதனைகளைச் செய்ய இது உதவும்.</li>
+                  <li>குறித்த நேரத்தில் வர முடியாவிட்டால், வழக்கமான <strong>நேரடி வருகை (walk-in)</strong> OPD வரிசைப்படி பார்க்கப்படுவீர்கள்.</li>
+                  <li>எக்ஸ்-ரே அல்லது இரத்தப் பரிசோதனை தேவையா? <strong>காலை 8 மணி முதல்</strong> எப்போது வேண்டுமானாலும் வரலாம்; மருத்துவர் பார்க்கும்போது ரிப்போர்ட் தயாராக இருக்கும்.</li>
+                  <li><strong>பழைய மருந்துச் சீட்டுகள், X-ray / MRI / CT பிலிம் மற்றும் ரிப்போர்ட்டுகள்</strong>, இப்போது சாப்பிடும் மருந்துகளை எடுத்து வரவும்.</li>
+                  <li>அடிபட்டிருந்தால் தளர்வான உடை அணியவும்; கட்டு அல்லது மாவுக்கட்டை நீங்களே அவிழ்க்க வேண்டாம்.</li>
+                  <li>நேரம் தோராயமானது: அவசர நோயாளி வந்தால் சிறிது தாமதம் ஆகலாம். பெயர் அழைக்கும் வரை காத்திருக்கவும்.</li>
+                  <li>வர முடியவில்லை என்றால் மருத்துவமனையை அழைக்கவும் அல்லது WhatsApp செய்யவும்; அந்த நேரத்தை வேறு நோயாளிக்கு தருவோம்.</li>
+                </ol>
+              </section>
+            </div>
+          </div>
+
+          <div class="notice danger" id="book-error" role="alert" hidden>
+            <svg class="ic" aria-hidden="true"><use href="#i-alert"/></svg>
+            <span></span>
+          </div>
+
+          <div class="wizard-nav">
+            <button class="btn btn-light" type="button" id="wiz-back"><svg class="ic" aria-hidden="true"><use href="#i-arrow-left"/></svg> <span data-i18n="bk.back">Back</span></button>
+            <button class="btn btn-navy" type="button" id="wiz-next">Next</button>
+          </div>
+        </div>
+
+        <div class="summary" role="group" aria-label="Your booking">
+          <div class="card">
+            <h2 class="card-title small"><svg class="ic" aria-hidden="true"><use href="#i-clipboard"/></svg> <span data-i18n="bk.summary">Your booking</span></h2>
+            <dl>
+              <div><dt data-i18n="bk.doctor">Doctor</dt><dd data-doctor="name">Dr. S. SIVABHARATHI</dd></div>
+              <div><dt data-i18n="bk.reason">Reason</dt><dd id="sum-reason"></dd></div>
+              <div><dt data-i18n="bk.date">Date</dt><dd id="sum-date"></dd></div>
+              <div><dt data-i18n="bk.time">Time</dt><dd id="sum-time"></dd></div>
+            </dl>
+            <div id="my-appts-box" hidden>
+              <h3 class="mine-title" data-i18n="bk.mine">Your bookings (saved on this phone)</h3>
+              <div id="my-appts"></div>
+            </div>
+            <a class="btn btn-green btn-block" data-tel href="tel:+919159998099"><svg class="ic" aria-hidden="true"><use href="#i-phone"/></svg> <span data-site="phone">+91 91599 98099</span></a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div data-include="footer"></div>
+  <script src="js/data.js?v=7"></script>
+  <script src="js/i18n.js?v=7"></script>
+  <script src="js/vendor/qrcode.min.js?v=7"></script>
+  <script src="js/booking-api.js?v=7"></script>
+  <script src="js/main.js?v=7"></script>
+</body>
+</html>

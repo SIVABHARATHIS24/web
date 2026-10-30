@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Services — Varnika Speciality Hospital</title>
+  <meta name="description" content="Fracture, joint, spine, sports, hand, foot and children's bone care at Varnika Speciality Hospital, Keeramangalam. See what is done here and what needs surgery.">
+  <meta name="theme-color" content="#0e2a5c">
+  <link rel="canonical" href="https://varnikahospital.in/services">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Varnika Speciality Hospital">
+  <meta property="og:title" content="Services — Varnika Speciality Hospital">
+  <meta property="og:description" content="Fracture, joint, spine, sports, hand, foot and children's bone care at Varnika Speciality Hospital, Keeramangalam. See what is done here and what needs surgery.">
+  <meta property="og:url" content="https://varnikahospital.in/services">
+  <meta property="og:image" content="https://varnikahospital.in/img/og-image.jpg?v=3">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="img/logo.svg?v=2" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png?v=2">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Noto+Sans:wght@400;500;600;700&family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css?v=7">
+</head>
+<body data-page="services">
+  <a class="skip-link" href="#main" data-i18n="c.skip">Skip to content</a>
+  <div data-include="header"></div>
+
+  <main id="main">
+    <section class="page-hero">
+      <div class="container">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="index.html" data-i18n="nav.home">Home</a> / <span data-i18n="nav.services">Services</span></nav>
+        <h1 data-i18n="svc.title">Orthopaedic services</h1>
+        <p data-i18n="svc.lead">Care for bones, joints, muscles and spine, from children to older adults. Each service shows whether it is done here or as surgery at a nearby hospital.</p>
+      </div>
+      <svg class="wave" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true"><path d="M0 40c240 50 480 50 720 20s480-60 720-10v40H0z"/></svg>
+    </section>
+
+    <section class="section first">
+      <div class="container">
+        <div class="section-head"><span class="kicker" data-i18n="home.k1">Under one roof</span><h2 data-i18n="svc.here">Available here</h2></div>
+        <div class="grid grid-4 facilities" id="facility-grid"></div>
+      </div>
+    </section>
+
+    <section class="section tint">
+      <div class="container">
+        <div class="section-head"><span class="kicker" data-i18n="home.k2">What we treat</span><h2 data-i18n="svc.conditions">Conditions &amp; treatments</h2></div>
+        <div class="search">
+          <svg class="ic" aria-hidden="true"><use href="#i-search"/></svg>
+          <label class="sr-only" for="service-search" data-i18n="svc.searchLabel">Search services</label>
+          <input id="service-search" type="search" placeholder="Search, e.g. knee, fracture, clubfoot" data-i18n-placeholder="svc.searchPh">
+        </div>
+        <div class="tabs" id="service-tabs" role="group" aria-label="Filter services"></div>
+        <div class="grid grid-3" id="service-grid"></div>
+        <div class="notice info spaced">
+          <svg class="ic" aria-hidden="true"><use href="#i-info"/></svg>
+          <span data-i18n="svc.note">Don't see your problem here? This list covers the most common conditions. We see all bone, joint and injury problems, so please <a href="contact.html">contact us</a> or just come in.</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div data-include="footer"></div>
+  <script src="js/data.js?v=7"></script>
+  <script src="js/i18n.js?v=7"></script>
+  <script src="js/booking-api.js?v=7"></script>
+  <script src="js/main.js?v=7"></script>
+</body>
+</html>

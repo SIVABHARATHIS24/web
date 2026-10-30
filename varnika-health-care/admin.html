@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Website Posts — Varnika</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#0e2a5c">
+  <link rel="icon" href="img/logo.svg?v=2" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png?v=2">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Noto+Sans:wght@400;500;600;700&family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css?v=7">
+</head>
+<body class="admin">
+  <header class="admin-bar">
+    <a class="admin-brand" href="index.html" target="_blank" rel="noopener"><img src="img/logo.svg?v=2" alt="" width="40" height="40"><span>Website posts</span></a>
+    <button class="btn btn-light btn-sm" type="button" id="sign-out" hidden>Sign out</button>
+  </header>
+
+  <main class="admin-main">
+    <!-- Sign in: the doctor's OPD login -->
+    <form class="card admin-card" id="sign-in" novalidate>
+      <h1>🔐 Doctor sign in</h1>
+      <p class="muted">Use the same email and password as the OPD app (doctor login).</p>
+      <div class="field"><label for="email">Email</label><input class="input" id="email" type="email" autocomplete="username" required></div>
+      <div class="field"><label for="password">Password</label><input class="input" id="password" type="password" autocomplete="current-password" required></div>
+      <label class="check"><input type="checkbox" id="remember" checked> Keep me signed in on this phone</label>
+      <button class="btn btn-gold btn-block" type="submit" id="sign-in-btn">Sign in</button>
+      <p class="admin-msg" id="sign-in-msg" role="alert"></p>
+    </form>
+
+    <div id="workspace" hidden>
+      <!-- A day off the doctor comes after all (update 25) -->
+      <section class="card admin-card" id="days-card">
+        <h1>🩺 Coming on a Sunday?</h1>
+        <p class="muted" id="days-lead">Tick the days you will see patients. Online booking opens for those days.</p>
+        <div class="day-pick" id="day-pick"></div>
+        <label class="check"><input type="checkbox" id="day-popup" checked> 🔔 Also tell patients with a popup on the front page</label>
+        <div class="btn-row start"><button class="btn btn-gold" type="button" id="days-save">💾 Save days</button></div>
+        <p class="admin-msg" id="days-msg" role="alert"></p>
+      </section>
+
+      <!-- Stop online booking for a day (update 26) -->
+      <section class="card admin-card" id="closed-card">
+        <h1>⛔ Stop online booking for a day</h1>
+        <p class="muted">Online times already start after the patients registered at the hospital (8 minutes each). On a busy day you can stop online booking completely: tick the day. Bookings already made stay; patients can still call or walk in.</p>
+        <div class="day-pick" id="closed-pick"></div>
+        <div class="btn-row start"><button class="btn btn-gold" type="button" id="closed-save">💾 Save</button></div>
+        <p class="admin-msg" id="closed-msg" role="alert"></p>
+      </section>
+
+      <!-- New post / edit -->
+      <form class="card admin-card" id="post-form" novalidate>
+        <h1 id="form-title">📢 New post</h1>
+        <div class="kind-pick" role="radiogroup" aria-label="What are you posting?">
+          <label class="kind c-orange"><input type="radio" name="kind" value="event" checked><span>🎉 Hospital news</span></label>
+          <label class="kind c-green"><input type="radio" name="kind" value="exercise"><span>🏃 Exercise</span></label>
+          <label class="kind c-blue"><input type="radio" name="kind" value="advice"><span>💡 Health advice</span></label>
+          <label class="kind c-gold"><input type="radio" name="kind" value="achievement"><span>🏆 Achievement</span></label>
+        </div>
+        <p class="kind-hint muted" id="kind-hint"></p>
+
+        <div class="field"><label for="title">Title</label><input class="input" id="title" maxlength="120" required placeholder="e.g. Free bone health camp this Sunday"></div>
+        <div class="field"><label for="body">Text</label><textarea class="input" id="body" rows="5" maxlength="4000" placeholder="Details, date and time, what to do…"></textarea></div>
+        <details class="tamil-box" id="tamil-box">
+          <summary>தமிழில் சேர்க்க (Tamil, optional)</summary>
+          <div class="field"><label for="title-ta">தலைப்பு</label><input class="input" id="title-ta" maxlength="120" lang="ta"></div>
+          <div class="field"><label for="body-ta">விவரம்</label><textarea class="input" id="body-ta" rows="4" maxlength="4000" lang="ta"></textarea></div>
+        </details>
+
+        <div class="field">
+          <span class="label">Photos <small class="muted">(up to 8)</small></span>
+          <div class="photo-grid" id="photo-grid"></div>
+          <label class="photo-add" id="photo-add"><input type="file" id="photo-input" accept="image/*" multiple>📷 Add photos</label>
+        </div>
+        <div class="field" id="video-field">
+          <label for="video">YouTube video link <small class="muted">(optional)</small></label>
+          <input class="input" id="video" inputmode="url" autocomplete="off" placeholder="https://youtu.be/…">
+          <small class="admin-hint" id="video-hint"></small>
+        </div>
+        <div class="field" id="date-field"><label for="date">Date</label><input class="input" id="date" type="date"></div>
+        <div class="popup-box" id="popup-box">
+          <label class="check"><input type="checkbox" id="popup" checked> 🔔 Show as a popup on the front page</label>
+          <div class="field" id="popup-until-field"><label for="popup-until">Popup until (last day)</label><input class="input" id="popup-until" type="date"></div>
+        </div>
+        <label class="check"><input type="checkbox" id="pinned"> 📌 Pin to the top</label>
+        <label class="check"><input type="checkbox" id="published" checked> 👁 Show on the website</label>
+
+        <div class="btn-row start">
+          <button class="btn btn-gold" type="submit" id="save-btn">📢 Post now</button>
+          <button class="btn btn-light" type="button" id="cancel-edit" hidden>Cancel edit</button>
+        </div>
+        <p class="admin-msg" id="form-msg" role="alert"></p>
+      </form>
+
+      <!-- Posts so far -->
+      <section class="card admin-card">
+        <h1>🗂 Your posts</h1>
+        <div class="tabs left" id="list-tabs" role="group" aria-label="Show posts">
+          <button class="tab c-navy" type="button" data-show="all" aria-pressed="true">All</button>
+          <button class="tab c-orange" type="button" data-show="event" aria-pressed="false">🎉 News</button>
+          <button class="tab c-green" type="button" data-show="exercise" aria-pressed="false">🏃 Exercise</button>
+          <button class="tab c-blue" type="button" data-show="advice" aria-pressed="false">💡 Advice</button>
+          <button class="tab c-gold" type="button" data-show="achievement" aria-pressed="false">🏆 Awards</button>
+        </div>
+        <ul class="admin-list" id="post-list"></ul>
+      </section>
+    </div>
+  </main>
+  <div class="toast" role="status" aria-live="polite"></div>
+
+  <script src="js/data.js?v=7"></script>
+  <script src="js/admin.js?v=7"></script>
+</body>
+</html>

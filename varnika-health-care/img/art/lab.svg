@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 240" role="img" aria-label="Laboratory test tubes and microscope">
+<circle cx="200" cy="124" r="96" fill="#e2f6f3"/>
+<circle cx="292" cy="54" r="10" fill="#0e9a8c" opacity=".35"/>
+<circle cx="96" cy="176" r="7" fill="#0e9a8c" opacity=".35"/>
+<path d="M80 64 l8 0 m-4 -4 l0 8" stroke="#0e9a8c" stroke-width="3" stroke-linecap="round" opacity=".6"/>
+<rect x="96" y="150" width="140" height="22" rx="6" fill="#fff" stroke="#1f3157" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M104 172 v26 M228 172 v26" fill="none" stroke="#1f3157" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<g>
+  <rect x="112" y="72" width="22" height="98" rx="11" fill="#fff" stroke="#1f3157" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M114 120 h18 v38 a9 9 0 0 1 -18 0 z" fill="#d63a3a"/>
+  <rect x="155" y="62" width="22" height="108" rx="11" fill="#fff" stroke="#1f3157" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M157 126 h18 v32 a9 9 0 0 1 -18 0 z" fill="#f5b301"/>
+  <rect x="198" y="80" width="22" height="90" rx="11" fill="#fff" stroke="#1f3157" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M200 112 h18 v46 a9 9 0 0 1 -18 0 z" fill="#7a4ddf"/>
+</g>
+<rect x="108" y="64" width="30" height="12" rx="4" fill="#d63a3a" stroke="#1f3157" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><rect x="151" y="54" width="30" height="12" rx="4" fill="#f5b301" stroke="#1f3157" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><rect x="194" y="72" width="30" height="12" rx="4" fill="#7a4ddf" stroke="#1f3157" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M266 196 h70 M300 196 v-20 M282 176 h40" fill="none" stroke="#1f3157" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M300 176 c-26 0 -34 -26 -22 -44" fill="none" stroke="#1f3157" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="276" y="62" width="22" height="64" rx="8" transform="rotate(-24 287 94)" fill="#dceafb" stroke="#1f3157" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="296" y="122" width="34" height="10" rx="4" fill="#0e9a8c" stroke="#1f3157" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M330 66 c-8 12 -12 20 -12 26 a12 12 0 0 0 24 0 c0 -6 -4 -14 -12 -26 z" fill="#d63a3a" stroke="#1f3157" stroke-width="3"/>
+</svg>
