@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 420" role="img" aria-label="Varnika Speciality Hospital, opposite the bus stand">
+<defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#dbeafe"/><stop offset="1" stop-color="#f6faff"/></linearGradient></defs>
+<rect width="800" height="420" fill="url(#sky)"/>
+<circle cx="690" cy="80" r="38" fill="#ffd54a" opacity=".9"/>
+<path d="M60 96 q20 -22 44 -6 q16 -18 38 0 q22 -4 22 16 h-110 q-8 -10 6 -10z" fill="#fff" opacity=".9"/>
+<path d="M520 60 q16 -16 34 -4 q14 -12 30 0 q18 -2 18 12 h-88 q-6 -8 6 -8z" fill="#fff" opacity=".9"/>
+<rect y="350" width="800" height="70" fill="#d9e2ec"/>
+<path d="M0 350 h800" fill="none" stroke="#1f3157" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M40 386 h80 M180 386 h80 M320 386 h80 M460 386 h80 M600 386 h80 M740 386 h60" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
+<rect x="210" y="120" width="380" height="230" fill="#fff" stroke="#1f3157" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="200" y="108" width="400" height="18" rx="4" fill="#8ac040" stroke="#1f3157" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="250" y="134" width="300" height="44" rx="8" fill="#0e2a5c" stroke="#1f3157" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="400" y="163" text-anchor="middle" font-family="Poppins, 'Noto Sans', Arial, sans-serif" font-size="19" font-weight="700" fill="#fff" textLength="272" lengthAdjust="spacingAndGlyphs">VARNIKA SPECIALITY HOSPITAL</text>
+<g fill="#dceafb" stroke="#1f3157" stroke-width="3">
+  <rect x="236" y="196" width="60" height="46" rx="4"/><rect x="316" y="196" width="60" height="46" rx="4"/>
+  <rect x="424" y="196" width="60" height="46" rx="4"/><rect x="504" y="196" width="60" height="46" rx="4"/>
+  <rect x="236" y="268" width="60" height="46" rx="4"/><rect x="504" y="268" width="60" height="46" rx="4"/>
+</g>
+<path d="M266 196 v46 M346 196 v46 M454 196 v46 M534 196 v46 M266 268 v46 M534 268 v46" stroke="#1f3157" stroke-width="2"/>
+<rect x="356" y="262" width="88" height="88" rx="6" fill="#9cc0ee" stroke="#1f3157" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M400 262 v88" stroke="#1f3157" stroke-width="3"/>
+<rect x="382" y="226" width="36" height="36" rx="8" fill="#d63a3a" stroke="#1f3157" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M400 234 v20 M390 244 h20" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+<path d="M340 350 h120 v-8 h-120 z" fill="#c4cfdc" stroke="#1f3157" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="120" cy="250" r="54" fill="#8ac040" stroke="#1f3157" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="92" cy="222" r="30" fill="#9ccf55" stroke="#1f3157" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M120 300 v50" stroke="#7a5230" stroke-width="10" stroke-linecap="round"/>
+<path d="M660 230 v120" fill="none" stroke="#1f3157" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><rect x="626" y="200" width="68" height="40" rx="8" fill="#f5b301" stroke="#1f3157" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="660" y="226" text-anchor="middle" font-family="Poppins, Arial, sans-serif" font-size="15" font-weight="700" fill="#0e2a5c">BUS</text>
+<circle cx="700" cy="350" r="0"/>
+</svg>

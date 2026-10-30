@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 240" role="img" aria-label="ECG monitor with heart tracing">
+<circle cx="200" cy="124" r="96" fill="#fdecec"/>
+<circle cx="292" cy="54" r="10" fill="#d63a3a" opacity=".35"/>
+<circle cx="96" cy="176" r="7" fill="#d63a3a" opacity=".35"/>
+<path d="M80 64 l8 0 m-4 -4 l0 8" stroke="#d63a3a" stroke-width="3" stroke-linecap="round" opacity=".6"/>
+<rect x="104" y="46" width="192" height="128" rx="14" fill="#fff" stroke="#1f3157" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="118" y="60" width="164" height="100" rx="8" fill="#14233f"/>
+<path d="M124 112 h34 l8 -10 l8 10 h10 l8 -40 l10 70 l8 -30 h18 l6 -8 l6 8 h40" stroke="#4ade80" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M200 174 v22 M168 200 h64" fill="none" stroke="#1f3157" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M300 84 c-10 -18 -38 -10 -30 12 c4 12 18 22 30 30 c12 -8 26 -18 30 -30 c8 -22 -20 -30 -30 -12 z" fill="#d63a3a" stroke="#1f3157" stroke-width="3" stroke-linejoin="round"/>
+<path d="M282 102 h8 l4 -8 l6 16 l4 -8 h10" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

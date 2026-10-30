@@ -38,6 +38,12 @@ Bookings go straight into the VHC OPD software (its Supabase database, update 21
 - **Coming on a Sunday after all** (update 25): on `admin.html`, the doctor ticks that Sunday under "Coming on a Sunday?". Booking opens for it, the timings show it as a green ⭐ row, and (optionally) a news popup tells patients until that day.
 - Limits are set in the OPD app (default 2 per 15 minutes and 40 per day). A mobile number can have at most 3 open requests.
 
+## Pictures
+
+- `img/art/*.svg`: drawings for the facility cards (consultation, X-ray, ECG, lab) and the hospital (Doctor page). `img/map-preview.svg` is the drawn map on Contact; the Google map loads only when tapped (it is about 2 MB).
+- `img/exercises/*.webp`: the exercise drawings from the OPD app, used by the exercise guide (`EXERCISES` in `js/data.js`, English and Tamil). The guide is on Health tips, with three of them on the home page.
+- Real photos of the hospital (front, reception, X-ray room, lab) and of the doctor would be better than the drawings. Optimise them to WebP, about 1600 px wide, before adding them.
+
 ## The doctor's posts (update 23)
 
 Open **varnikahospital.in/admin** on the phone and sign in with the doctor's OPD login (reception logins are refused).
@@ -54,7 +60,7 @@ The database checks that only the doctor can post or upload (`website_post_save`
 
 ## After changing a file
 
-Cloudflare tells browsers to keep images, scripts and styles for 4 hours. The pages link them with a version (`css/styles.css?v=3`, `img/logo.svg?v=2`). When you change one of those files, raise its number in every `.html` file (all files share one number; it is 5 now) (and in `js/main.js` for the logo), so visitors get the new file straight away.
+Cloudflare tells browsers to keep images, scripts and styles for 4 hours. The pages link them with a version (`css/styles.css?v=3`, `img/logo.svg?v=2`). When you change one of those files, raise its number in every `.html` file (all files share one number; it is 6 now) (and in `js/main.js` for the logo), so visitors get the new file straight away.
 
 ## Publishing on Cloudflare Pages (recommended, free)
 

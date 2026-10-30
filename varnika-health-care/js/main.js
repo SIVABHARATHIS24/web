@@ -121,13 +121,13 @@
     if (!slot) return;
     const page = document.body.dataset.page;
     slot.innerHTML = `
-      <div class="topbar">
+      <aside class="topbar" aria-label="${t("contactBar")}">
         <div class="container">
           <span class="status-pill sm" data-open-status="short"></span>
           <span class="tb-item hide-sm">${icon("pin")} ${L(SITE.addressShort)}</span>
           <a class="tb-item" href="${telHref(SITE.phone)}">${icon("phone")} ${SITE.phone}</a>
         </div>
-      </div>
+      </aside>
       <header class="site-header">
         <div class="container">
           ${brandHtml(false)}
@@ -157,11 +157,11 @@
               <p>${L(d.name)}, ${L(d.quals)}<br>${L(d.title)}<br>${I.lang === "ta" ? "பதிவு எண்" : "Reg. No."} ${d.reg}</p>
             </div>
             <div>
-              <h4>${t("pages")}</h4>
+              <h2>${t("pages")}</h2>
               <ul>${NAV.map((n) => `<li><a href="${n.href}">${navLabel(n)}</a></li>`).join("")}</ul>
             </div>
             <div>
-              <h4>${t("visitUs")}</h4>
+              <h2>${t("visitUs")}</h2>
               <ul class="footer-contact">
                 <li>${icon("pin")}<span>${L(SITE.address)}<br><a href="${SITE.mapLink}" target="_blank" rel="noopener">${t("openMaps")}</a></span></li>
                 <li>${icon("clock")}<span>${t("everyDayHours", { h: HOURS_TEXT, lab: LAB_TEXT })}</span></li>
@@ -176,11 +176,11 @@
           </div>
         </div>
       </footer>
-      <div class="fab-wrap">
+      <aside class="fab-wrap" aria-label="${t("quickContact")}">
         <button class="fab top" type="button" aria-label="${t("backTop")}">${icon("arrow-up")}</button>
         <a class="fab wa" href="${waHref(t("waHello"))}" target="_blank" rel="noopener" aria-label="${t("chatWa")}">${icon("chat")}</a>
         <a class="fab call" href="${telHref(SITE.phone)}" aria-label="${t("callUs")}">${icon("phone")}</a>
-      </div>
+      </aside>
       <div class="toast" role="status" aria-live="polite"></div>`;
   }
 
@@ -305,6 +305,7 @@
     const render = () => {
       wrap.innerHTML = window.FACILITIES.map((f) => `
         <div class="feature c-${f.color} reveal">
+          ${f.art ? `<img class="feature-art" src="img/art/${f.art}.svg?v=1" alt="" width="400" height="240">` : ""}
           <span class="feature-icon">${icon(f.icon)}</span>
           <h3>${L(f.title)}</h3>
           <p>${L(f.text)}</p>
@@ -315,13 +316,14 @@
   }
 
   const groupOf = (id) => window.SERVICE_GROUPS.find((g) => g.id === id);
-  function serviceCard(s) {
+  // compact (home page preview): no checklist; the Services page has the full card.
+  function serviceCard(s, compact) {
     const g = groupOf(s.group);
     const where = { here: `<span class="chip here">${icon("clinic")} ${t("atHere")}</span>`, hospital: `<span class="chip away">${icon("hospital")} ${t("atHospital")}</span>` };
     return `<article class="svc c-${g.color} reveal">
       <div class="svc-head"><span class="svc-icon">${icon(s.icon)}</span><div><span class="svc-group">${L(g.name)}</span><h3>${L(s.title)}</h3></div></div>
       <p>${L(s.text)}</p>
-      <ul class="ticks">${L(s.items).map((i) => `<li>${icon("check")}<span>${i}</span></li>`).join("")}</ul>
+      ${compact ? "" : `<ul class="ticks">${L(s.items).map((i) => `<li>${icon("check")}<span>${i}</span></li>`).join("")}</ul>`}
       <div class="where">${s.where.map((w) => where[w]).join("")}</div>
     </article>`;
   }
@@ -340,7 +342,7 @@
       let list = window.SERVICES.filter((s) => (group === "all" || s.group === group)
         && (!q || [s.title.en, s.title.ta, s.text.en, s.text.ta, ...s.items.en, ...s.items.ta].join(" ").toLowerCase().includes(q)));
       if (limit) list = list.slice(0, limit);
-      grid.innerHTML = list.length ? list.map(serviceCard).join("")
+      grid.innerHTML = list.length ? list.map((s) => serviceCard(s, !!limit)).join("")
         : `<div class="empty">${t("noService", { q: escapeHtml(q) })}</div>`;
       if (!animate) $$(".reveal", grid).forEach((el) => el.classList.add("in"));
     };
@@ -382,11 +384,23 @@
     renderers.push(render);
   }
 
+  // The Google map (about 2 MB) loads only when asked for; until then a drawn map.
   function initMap() {
     const map = $("#map");
     if (!map) return;
-    map.innerHTML = `<iframe title="Map showing ${SITE.name}" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
-      src="https://www.google.com/maps?q=${encodeURIComponent(SITE.mapQuery)}&output=embed"></iframe>`;
+    const draw = () => {
+      if (map.querySelector("iframe")) return;
+      map.innerHTML = `<button type="button" class="map-preview" data-load-map>
+        <img src="img/map-preview.svg?v=1" alt="" width="1200" height="520">
+        <span class="map-cta">${icon("pin")} ${t("showMap")}</span></button>`;
+    };
+    map.addEventListener("click", (e) => {
+      if (!e.target.closest("[data-load-map]")) return;
+      map.innerHTML = `<iframe title="Map showing ${SITE.name}" referrerpolicy="no-referrer-when-downgrade"
+        src="https://www.google.com/maps?q=${encodeURIComponent(SITE.mapQuery)}&output=embed"></iframe>`;
+    });
+    draw();
+    renderers.push(draw);
   }
 
   /* ---------------------------------------------------------------- Forms */
@@ -928,20 +942,22 @@
   // Photo viewer for every post photo on the page.
   function openLightbox(post, index) {
     let at = index;
+    const count = (post.urls || post.photos).length;
+    const src = (i) => (post.urls ? post.urls[i] : media(post.photos[i]));
     const wrap = document.createElement("div");
     wrap.className = "lightbox";
     wrap.setAttribute("role", "dialog");
     wrap.setAttribute("aria-modal", "true");
-    const many = post.photos.length > 1;
+    const many = count > 1;
     const draw = () => {
-      wrap.innerHTML = `<img src="${media(post.photos[at])}" alt="${escapeHtml(postTitle(post))}">
-        <div class="lb-cap">${escapeHtml(postTitle(post))}${many ? ` · ${at + 1} / ${post.photos.length}` : ""}</div>
+      wrap.innerHTML = `<img src="${src(at)}" alt="${escapeHtml(postTitle(post))}" class="${post.urls ? "light" : ""}">
+        <div class="lb-cap">${escapeHtml(postTitle(post))}${many ? ` · ${at + 1} / ${count}` : ""}</div>
         <button class="icon-btn lb-x" type="button" data-close aria-label="${t("close")}">${icon("x")}</button>
         ${many ? `<button class="icon-btn lb-prev" type="button" data-step="-1" aria-label="${t("prevPhoto")}">${icon("arrow-left")}</button>
         <button class="icon-btn lb-next" type="button" data-step="1" aria-label="${t("nextPhoto")}">${icon("arrow")}</button>` : ""}`;
       $("[data-close]", wrap).focus();
     };
-    const step = (d) => { at = (at + d + post.photos.length) % post.photos.length; draw(); };
+    const step = (d) => { at = (at + d + count) % count; draw(); };
     const close = () => { wrap.remove(); document.removeEventListener("keydown", onKey); };
     const onKey = (e) => {
       if (e.key === "Escape") close();
@@ -1056,8 +1072,15 @@
       Promise.all([posts("exercise", 60), posts("advice", 60)]).then(([ex, adv]) => {
         healthPosts = [...ex, ...adv].sort((a, b) => Number(b.pinned) - Number(a.pinned) || String(b.date).localeCompare(String(a.date)));
         remember(healthPosts);
+        const section = health.closest("[data-posts-section]");
+        if (section) section.hidden = !healthPosts.length;
         render();
-      }).catch(() => { healthPosts = []; render(); });
+      }).catch(() => {
+        healthPosts = [];
+        const section = health.closest("[data-posts-section]");
+        if (section) section.hidden = true;
+        render();
+      });
       renderers.push(() => { renderTabs(); render(); });
     }
   }
@@ -1070,6 +1093,43 @@
       if (Array.isArray(o.extra_days)) doctorExtraDays = o.extra_days;
       renderOpenStatus();
     });
+  }
+
+  /* ---------------------------------------------------------------- Exercise guide */
+  // health.html shows all; the home page shows a few (data-ids="knee,back,neck").
+  const exerciseImg = (x) => `img/exercises/${x.img}.webp?v=1`;
+  function exerciseCard(x, short) {
+    return `<article class="exercise c-${x.color} reveal" id="ex-${x.id}">
+      <button class="exercise-img" type="button" data-exercise="${x.id}" aria-label="${escapeHtml(t("openPhoto"))}: ${escapeHtml(L(x.name))}">
+        <img src="${exerciseImg(x)}" alt="${escapeHtml(L(x.name))}" loading="lazy"></button>
+      <div class="exercise-text">
+        <span class="chip kind">${escapeHtml(L(x.pain))}</span>
+        <h3>${escapeHtml(L(x.name))}</h3>
+        ${short ? "" : `<ol class="exercise-steps">${L(x.steps).map((s) => `<li>${escapeHtml(s)}</li>`).join("")}</ol>
+        <p class="exercise-reps">${icon("clock")} ${escapeHtml(L(x.reps))}</p>`}
+      </div>
+    </article>`;
+  }
+  function initExercises() {
+    const grids = $$("[data-exercises]");
+    if (!grids.length || !window.EXERCISES) return;
+    const render = () => grids.forEach((grid) => {
+      const ids = grid.dataset.exercises ? grid.dataset.exercises.split(",") : null;
+      const list = ids ? ids.map((id) => window.EXERCISES.find((x) => x.id === id)).filter(Boolean) : window.EXERCISES;
+      const again = grid.dataset.drawn === "1";
+      grid.innerHTML = list.map((x) => exerciseCard(x, !!ids)).join("");
+      grid.dataset.drawn = "1";
+      if (again) $$(".reveal", grid).forEach((el) => el.classList.add("in"));
+    });
+    document.addEventListener("click", (e) => {
+      const b = e.target.closest("[data-exercise]");
+      if (!b) return;
+      const x = window.EXERCISES.find((y) => y.id === b.dataset.exercise);
+      if (b.closest("[data-exercises]").dataset.exercises) { location.href = `health.html#ex-${x.id}`; return; }
+      openLightbox({ title: L(x.name), title_ta: null, urls: [exerciseImg(x)] }, 0);
+    });
+    render();
+    renderers.push(render);
   }
 
   /* ---------------------------------------------------------------- Boot */
@@ -1098,6 +1158,7 @@
     initContactForm();
     initBooking();
     initPosts();
+    initExercises();
     initReveal();
     setInterval(renderOpenStatus, 60000);
   }

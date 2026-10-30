@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 240" role="img" aria-label="X-ray of a knee on a viewer">
+<circle cx="200" cy="124" r="96" fill="#f1ebfd"/>
+<circle cx="292" cy="54" r="10" fill="#7a4ddf" opacity=".35"/>
+<circle cx="96" cy="176" r="7" fill="#7a4ddf" opacity=".35"/>
+<path d="M80 64 l8 0 m-4 -4 l0 8" stroke="#7a4ddf" stroke-width="3" stroke-linecap="round" opacity=".6"/>
+<rect x="122" y="30" width="156" height="186" rx="12" fill="#1d2a4d" stroke="#1f3157" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="134" y="42" width="132" height="162" rx="6" fill="#26386a"/>
+<circle cx="160" cy="34" r="6" fill="#f5b301" stroke="#1f3157" stroke-width="2"/><circle cx="240" cy="34" r="6" fill="#f5b301" stroke="#1f3157" stroke-width="2"/>
+<g fill="#eaf1ff" opacity=".92">
+  <path d="M182 42 h36 v52 c10 6 16 14 16 22 c0 8 -8 12 -18 12 c-6 -4 -10 -6 -16 -6 c-6 0 -10 2 -16 6 c-10 0 -18 -4 -18 -12 c0 -8 6 -16 16 -22 z"/>
+  <path d="M176 140 c8 -4 16 -6 24 -6 c8 0 16 2 24 6 c2 8 -2 14 -8 16 v48 h-30 v-48 c-6 -2 -10 -8 -10 -16 z"/>
+  <rect x="226" y="146" width="10" height="58" rx="5"/>
+  <ellipse cx="236" cy="112" rx="9" ry="13" opacity=".75"/>
+</g>
+<path d="M188 128 q12 6 24 0" stroke="#8fb2ff" stroke-width="2" fill="none"/>
+<path d="M300 70 l10 -10 M306 92 h14 M300 114 l10 10" stroke="#7a4ddf" stroke-width="4" stroke-linecap="round"/>
+</svg>
