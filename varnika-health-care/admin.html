@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Noto+Sans:wght@400;500;600;700&family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=6">
+  <link rel="stylesheet" href="css/styles.css?v=7">
 </head>
 <body class="admin">
   <header class="admin-bar">
@@ -40,6 +40,15 @@
         <label class="check"><input type="checkbox" id="day-popup" checked> 🔔 Also tell patients with a popup on the front page</label>
         <div class="btn-row start"><button class="btn btn-gold" type="button" id="days-save">💾 Save days</button></div>
         <p class="admin-msg" id="days-msg" role="alert"></p>
+      </section>
+
+      <!-- Stop online booking for a day (update 26) -->
+      <section class="card admin-card" id="closed-card">
+        <h1>⛔ Stop online booking for a day</h1>
+        <p class="muted">Online times already start after the patients registered at the hospital (8 minutes each). On a busy day you can stop online booking completely: tick the day. Bookings already made stay; patients can still call or walk in.</p>
+        <div class="day-pick" id="closed-pick"></div>
+        <div class="btn-row start"><button class="btn btn-gold" type="button" id="closed-save">💾 Save</button></div>
+        <p class="admin-msg" id="closed-msg" role="alert"></p>
       </section>
 
       <!-- New post / edit -->
@@ -102,7 +111,7 @@
   </main>
   <div class="toast" role="status" aria-live="polite"></div>
 
-  <script src="js/data.js?v=6"></script>
-  <script src="js/admin.js?v=6"></script>
+  <script src="js/data.js?v=7"></script>
+  <script src="js/admin.js?v=7"></script>
 </body>
 </html>

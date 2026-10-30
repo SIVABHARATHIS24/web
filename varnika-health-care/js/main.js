@@ -482,7 +482,7 @@
     // Online booking: requests go straight into the hospital's OPD software. Until the
     // service answers (or when it is off or unreachable) the request is sent on WhatsApp.
     const api = window.BookingAPI;
-    const service = { online: false, closed: false, lastDate: null };
+    const service = { online: false, closed: false, lastDate: null, closedDays: [] };
     const upi = { fee: 0, id: null, name: null }; // the hospital's UPI, when it takes an online fee
     const taken = {}; // date -> Set of "HH:MM" that are full or past
     const useOnline = () => service.online && !service.closed;
@@ -492,6 +492,7 @@
         service.online = true;
         service.closed = !o.accepting;
         service.lastDate = o.last_date || null;
+        if (Array.isArray(o.closed_days)) service.closedDays = o.closed_days;
         if (o.fee > 0 && o.upi_id) Object.assign(upi, { fee: o.fee, id: o.upi_id, name: o.upi_name || SITE.name });
         renderMine();
         drawPayment();
@@ -533,6 +534,13 @@
           if (state.date === k) state.date = null;
           chips.push(`<button type="button" class="date-chip off" disabled title="${t("noDoctor")}">
           <small>${I.day(d.getDay())}</small><strong>${d.getDate()}</strong><small class="no-dr">${t("noDoctor")}</small></button>`);
+          continue;
+        }
+        // The doctor stopped online booking for this day (update 26): patients can still call or walk in.
+        if (useOnline() && service.closedDays.includes(k)) {
+          if (state.date === k) state.date = null;
+          chips.push(`<button type="button" class="date-chip off" disabled title="${t("onlineClosedTitle")}">
+          <small>${i === 0 ? t("today") : I.day(d.getDay())}</small><strong>${d.getDate()}</strong><small class="no-dr">${t("onlineClosed")}</small></button>`);
           continue;
         }
         chips.push(`<button type="button" class="date-chip ${state.date === k ? "selected" : ""}" data-date="${k}" aria-pressed="${state.date === k}">
@@ -645,7 +653,7 @@
     };
     // Which wizard step / field to send the patient back to for each service error.
     const FIELD_ERRORS = { bad_name: "p-name", bad_phone: "p-phone", bad_age: "p-age", bad_gender: null, bad_notes: "p-notes" };
-    const SLOT_ERRORS = ["bad_date", "bad_time", "slot_past", "slot_full", "day_full"];
+    const SLOT_ERRORS = ["bad_date", "bad_time", "slot_past", "slot_full", "day_full", "queue_ahead", "day_closed"];
     let sending = false;
     let last = null; // the finished booking, so the success screen can be re-drawn in the other language
 
@@ -687,13 +695,16 @@
         const input = FIELD_ERRORS[r.error] && $("#" + FIELD_ERRORS[r.error]);
         if (input) { input.closest(".field").classList.add("invalid"); input.setAttribute("aria-invalid", "true"); input.focus(); }
       } else if (SLOT_ERRORS.includes(r.error)) {
+        if (r.error === "day_closed" && !service.closedDays.includes(state.date)) service.closedDays.push(state.date);
         delete taken[state.date];
         state.time = null;
         state.step = 1;
         show();
         loadTaken(state.date);
       }
-      showError(I.errorText(r.error, r.message || t("bookFailed")));
+      // queue_ahead: patients registered at the hospital fill the earlier times; free_from is the first free one.
+      showError(I.errorText(r.error, r.message || t("bookFailed")).replace("{time}", r.free_from ? fmtTime(r.free_from) : ""));
+      if (r.error === "day_closed") renderDates();
     }
 
     // sent = the hospital's OPD software has the request; otherwise the patient sends it on WhatsApp.

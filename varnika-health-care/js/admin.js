@@ -168,6 +168,7 @@
     resetForm();
     loadPosts();
     loadDays();
+    loadClosed();
   }
 
   function signOut() {
@@ -534,6 +535,81 @@
       toast(added.length ? `✔ Saved — patients can book ${added.map(pretty).join(", ")}${posted ? " (popup posted)" : ""}.` : "✔ Saved.");
     } catch (err) {
       msg("#days-msg", friendly(err));
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  /* ---------------------------------------------------------------- Stop online booking for a day (update 26) */
+  let closedDays = [];
+  const closedPicked = new Set();
+  let bookingDays = 13;
+
+  // The doctor's days from today to the last bookable day.
+  function bookableDates() {
+    const out = [];
+    for (let i = 0; i <= bookingDays; i++) {
+      const d = new Date(); d.setDate(d.getDate() + i);
+      const k = dateKey(d);
+      if (!offDays.includes(d.getDay()) || extraDays.includes(k) || closedDays.includes(k)) out.push(k);
+    }
+    return out;
+  }
+
+  function drawClosed() {
+    const today = dateKey(new Date());
+    $("#closed-pick").innerHTML = bookableDates().map((k) => {
+      const d = toDate(k), off = closedPicked.has(k);
+      return `<button type="button" class="day-chip stop${off ? " on" : ""}" data-closed="${k}" aria-pressed="${off}">
+        <small>${k === today ? "Today" : DAY_EN[d.getDay()].slice(0, 3)}</small><strong>${d.getDate()}</strong><small>${d.toLocaleDateString("en-GB", { month: "short" })}</small>
+        <span>${off ? "⛔ Stopped" : "Open"}</span></button>`;
+    }).join("");
+  }
+
+  async function loadClosed() {
+    msg("#closed-msg", "");
+    try {
+      const o = await rpc("website_booking_options");
+      if (!Array.isArray(o.closed_days)) {
+        $("#closed-save").disabled = true;
+        $("#closed-pick").innerHTML = "";
+        msg("#closed-msg", "Run update 26 (26_update_walkin_queue.sql) in Supabase first.");
+        return;
+      }
+      if (Array.isArray(o.off_days)) offDays = o.off_days;
+      if (Array.isArray(o.extra_days)) extraDays = o.extra_days;
+      if (o.today && o.last_date) bookingDays = Math.round((toDate(o.last_date) - toDate(o.today)) / 86400000);
+      closedDays = o.closed_days;
+      closedPicked.clear();
+      closedDays.forEach((k) => closedPicked.add(k));
+      $("#closed-save").disabled = false;
+      drawClosed();
+    } catch (err) {
+      msg("#closed-msg", friendly(err));
+    }
+  }
+
+  $("#closed-pick").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-closed]");
+    if (!b) return;
+    const k = b.dataset.closed;
+    if (closedPicked.has(k)) closedPicked.delete(k); else closedPicked.add(k);
+    drawClosed();
+  });
+
+  $("#closed-save").addEventListener("click", async () => {
+    const btn = $("#closed-save");
+    btn.disabled = true;
+    msg("#closed-msg", "Saving…", true);
+    try {
+      closedDays = (await rpc("website_closed_days_save", { p_days: [...closedPicked] })) || [];
+      closedPicked.clear();
+      closedDays.forEach((k) => closedPicked.add(k));
+      drawClosed();
+      msg("#closed-msg", "");
+      toast(closedDays.length ? `✔ Saved — online booking stopped for ${closedDays.map(pretty).join(", ")}.` : "✔ Saved — online booking is open on every day.");
+    } catch (err) {
+      msg("#closed-msg", friendly(err));
     } finally {
       btn.disabled = false;
     }
