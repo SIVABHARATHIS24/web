@@ -25,11 +25,13 @@ window.SITE = {
   // Used for the embedded map on the Contact page. For an exact pin, replace
   // with the hospital's coordinates, e.g. "10.4050,79.0500".
   mapQuery: "VARNIKA HEALTH CARE, Keeramangalam North, Tamil Nadu 614624",
-  // Same hours every day of the week, including Sundays and holidays.
+  // Lab hours every day, including Sundays and holidays. The doctor is not in on
+  // doctorOffDays (0 = Sunday); the OPD service's own list (off_days) wins when online.
   // hours = doctor consultation (online booking times); labHours = laboratory, X-ray and ECG.
   // Patients may come for tests any time from labHours[0], before the doctor arrives.
   hours: ["17:00", "21:00"],
   labHours: ["08:00", "21:00"],
+  doctorOffDays: [0],
   // Online booking goes straight into the hospital's OPD software. This key is
   // meant to be public: it can only send a booking request and see which times
   // are full. It cannot read any patient data. Never put a secret key here.
@@ -144,8 +146,8 @@ window.SERVICES = [
 // {hours} is replaced with the opening hours, e.g. "5 PM – 9 PM".
 window.FAQS = [
   { q: { en: "What are the timings?", ta: "நேரம் என்ன?" },
-    a: { en: "Laboratory, X-ray and ECG: {lab}. Doctor consultation: {hours}. Every day, including Sundays and holidays. You can come for your tests any time from {labStart}, so the reports are ready when the doctor sees you.",
-         ta: "ஆய்வகம், எக்ஸ்-ரே, ECG: {lab}. மருத்துவர் ஆலோசனை: {hours}. ஞாயிறு, விடுமுறை நாட்கள் உட்பட தினமும். பரிசோதனைகளுக்கு {labStart} முதல் எப்போது வேண்டுமானாலும் வரலாம்; மருத்துவர் பார்க்கும்போது ரிப்போர்ட்டுகள் தயாராக இருக்கும்." } },
+    a: { en: "Laboratory, X-ray and ECG: {lab}, every day including Sundays and holidays. Doctor consultation: {hours}, Monday to Saturday (no doctor on Sundays). You can come for your tests any time from {labStart}, so the reports are ready when the doctor sees you.",
+         ta: "ஆய்வகம், எக்ஸ்-ரே, ECG: {lab}, ஞாயிறு, விடுமுறை நாட்கள் உட்பட தினமும். மருத்துவர் ஆலோசனை: {hours}, திங்கள் முதல் சனி வரை (ஞாயிறு மருத்துவர் இல்லை). பரிசோதனைகளுக்கு {labStart} முதல் எப்போது வேண்டுமானாலும் வரலாம்; மருத்துவர் பார்க்கும்போது ரிப்போர்ட்டுகள் தயாராக இருக்கும்." } },
   { q: { en: "Is it open 24 hours?", ta: "24 மணி நேரமும் திறந்திருக்குமா?" },
     a: { en: "No. We are open {lab} (doctor {hours}). For serious injuries outside these hours, please go to the nearest hospital emergency department or call 108 for an ambulance.",
          ta: "இல்லை. {lab} மட்டும் திறந்திருக்கும் (மருத்துவர் {hours}). இந்த நேரத்துக்கு வெளியே கடுமையான காயம் என்றால், அருகிலுள்ள மருத்துவமனை அவசரப் பிரிவுக்குச் செல்லவும் அல்லது 108 ஆம்புலன்ஸை அழைக்கவும்." } },

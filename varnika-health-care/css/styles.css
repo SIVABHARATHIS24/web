@@ -497,6 +497,12 @@ html[lang="ta"] .summary dt { text-transform: none; letter-spacing: 0; }
 [lang="ta"] { font-family: "Noto Sans Tamil", var(--font); }
 @media (max-width: 720px) { .visit-tips { grid-template-columns: 1fr; } }
 
+/* No doctor that day (Sunday): the timings cell and the booking calendar. */
+.hours td.off { color: var(--red); font-weight: 700; white-space: normal; }
+.date-chip.off { opacity: .55; cursor: not-allowed; background: repeating-linear-gradient(135deg, #fff 0 6px, var(--red-soft) 6px 12px); border-color: #f3c5c5; }
+.date-chip.off:hover { transform: none; }
+.date-chip .no-dr { color: var(--red); font-weight: 700; font-size: .62rem; line-height: 1.1; }
+
 /* ---------- The doctor's posts (news, exercises, advice, achievements) ---------- */
 .posts { align-items: start; }
 .post { --c: var(--navy); position: relative; display: flex; flex-direction: column; overflow: hidden; background: #fff; border-radius: var(--radius); border: 1px solid var(--line); border-top: 5px solid var(--c); box-shadow: var(--shadow); transition: transform .2s ease, box-shadow .2s ease; }

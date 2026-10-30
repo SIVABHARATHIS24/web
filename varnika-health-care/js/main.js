@@ -88,6 +88,9 @@
   const LAB_TEXT = `${fmtTime(SITE.labHours[0])} – ${fmtTime(SITE.labHours[1])}`;
   const nowMinutes = () => { const now = new Date(); return now.getHours() * 60 + now.getMinutes(); };
   const inHours = (h, m = nowMinutes()) => m >= toMin(h[0]) && m < toMin(h[1]);
+  // Days of the week (0 = Sunday) with no doctor; the OPD service's list replaces it when online.
+  let doctorOffDays = SITE.doctorOffDays || [];
+  const doctorDay = (d) => !doctorOffDays.includes(d);
 
   /* ---------------------------------------------------------------- Layout */
   const NAV = [
@@ -261,20 +264,22 @@
   // Open = the lab is open; the long label also says whether the doctor is in yet.
   function renderOpenStatus() {
     const open = inHours(SITE.labHours);
-    const doctorIn = inHours(SITE.hours);
+    const doctorToday = doctorDay(new Date().getDay());
+    const doctorIn = doctorToday && inHours(SITE.hours);
     $$("[data-open-status]").forEach((el) => {
       el.classList.toggle("closed", !open);
       const short = el.dataset.openStatus === "short";
       const text = !open ? t(short ? "closedShort" : "closedNow", { t: fmtTime(SITE.labHours[0]) })
         : short ? t("openShort")
-        : doctorIn ? t("openDoctor", { t: fmtTime(SITE.hours[1]) }) : t("openLab", { t: fmtTime(SITE.hours[0]) });
+        : doctorIn ? t("openDoctor", { t: fmtTime(SITE.hours[1]) })
+        : !doctorToday ? t("openNoDoctor") : t("openLab", { t: fmtTime(SITE.hours[0]) });
       el.innerHTML = `<span class="dot"></span> ${text}`;
     });
     $$("[data-hours-table]").forEach((table) => {
       const today = new Date().getDay();
-      const row = (th, cls) => `<tr class="${cls || ""}"><th>${th}</th><td class="lab">${LAB_TEXT}</td><td>${HOURS_TEXT}</td></tr>`;
+      const row = (th, cls, off) => `<tr class="${cls || ""}"><th>${th}</th><td class="lab">${LAB_TEXT}</td><td${off ? ' class="off"' : ""}>${off ? t("noDoctor") : HOURS_TEXT}</td></tr>`;
       table.innerHTML = `<tr class="head"><th>${t("colDay")}</th><td class="lab">${t("colLab")}</td><td>${t("colDoctor")}</td></tr>`
-        + [1, 2, 3, 4, 5, 6, 0].map((d) => row(`${I.dayLong(d)}${d === today ? t("todayMark") : ""}`, d === today ? "today" : "")).join("")
+        + [1, 2, 3, 4, 5, 6, 0].map((d) => row(`${I.dayLong(d)}${d === today ? t("todayMark") : ""}`, d === today ? "today" : "", !doctorDay(d))).join("")
         + row(t("holidays"));
     });
   }
@@ -460,6 +465,7 @@
         service.online = true;
         service.closed = !o.accepting;
         service.lastDate = o.last_date || null;
+        if (Array.isArray(o.off_days)) { doctorOffDays = o.off_days; renderOpenStatus(); }
         if (o.fee > 0 && o.upi_id) Object.assign(upi, { fee: o.fee, id: o.upi_id, name: o.upi_name || SITE.name });
         renderMine();
         drawPayment();
@@ -497,6 +503,12 @@
         const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() + i);
         const k = dateKey(d);
         if (service.lastDate && k > service.lastDate) break;
+        if (!doctorDay(d.getDay())) {
+          if (state.date === k) state.date = null;
+          chips.push(`<button type="button" class="date-chip off" disabled title="${t("noDoctor")}">
+          <small>${I.day(d.getDay())}</small><strong>${d.getDate()}</strong><small class="no-dr">${t("noDoctor")}</small></button>`);
+          continue;
+        }
         chips.push(`<button type="button" class="date-chip ${state.date === k ? "selected" : ""}" data-date="${k}" aria-pressed="${state.date === k}">
           <small>${i === 0 ? t("today") : I.day(d.getDay())}</small><strong>${d.getDate()}</strong><small>${I.month(d.getMonth())}</small></button>`);
       }
