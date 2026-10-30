@@ -65,6 +65,10 @@
     send: '<path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/>',
     clipboard: '<rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/>',
     clinic: '<path d="M3 21h18"/><path d="M5 21V8l7-5 7 5v13"/><path d="M10 21v-5h4v5"/><path d="M12 8v4"/><path d="M10 10h4"/>',
+    play: '<polygon points="6 3 20 12 6 21 6 3"/>',
+    heart: '<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>',
+    award: '<circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/>',
+    megaphone: '<path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/>',
     globe: '<circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>',
   };
   const icon = (name, cls = "") => `<svg class="ic ${cls}" aria-hidden="true"><use href="#i-${name}"/></svg>`;
@@ -90,6 +94,7 @@
     { href: "index.html", key: "nav.home", label: ["Home", "முகப்பு"], page: "home" },
     { href: "about.html", key: "nav.about", label: ["Doctor", "மருத்துவர்"], page: "about" },
     { href: "services.html", key: "nav.services", label: ["Services", "சிகிச்சைகள்"], page: "services" },
+    { href: "health.html", key: "nav.health", label: ["Health tips", "ஆரோக்கியம்"], page: "health" },
     { href: "appointment.html", key: "nav.book", label: ["Appointment", "முன்பதிவு"], page: "appointment" },
     { href: "contact.html", key: "nav.contact", label: ["Contact", "தொடர்பு"], page: "contact" },
   ];
@@ -800,6 +805,239 @@
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
+  /* ---------------------------------------------------------------- The doctor's posts */
+  // Events (front-page popup + news strip), exercises and health advice (health.html),
+  // achievements (about.html). Posted from admin.html; read with BookingAPI.posts.
+  const KINDS = {
+    event: { color: "orange", icon: "megaphone", label: ["Hospital news", "மருத்துவமனை செய்திகள்"] },
+    exercise: { color: "green", icon: "dumbbell", label: ["Exercise", "உடற்பயிற்சி"] },
+    advice: { color: "blue", icon: "heart", label: ["Health advice", "சுகாதார ஆலோசனை"] },
+    achievement: { color: "gold", icon: "award", label: ["Achievement", "சாதனை"] },
+  };
+  const postTitle = (p) => (I.lang === "ta" && p.title_ta) || p.title;
+  const postBody = (p) => (I.lang === "ta" && p.body_ta) || p.body || "";
+  const postDate = (p) => (p.date ? prettyDate(p.date) : "");
+  const textHtml = (s) => escapeHtml(s).replace(/\n/g, "<br>");
+  const ytThumb = (id) => `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+  const media = (path) => window.BookingAPI.mediaUrl(path);
+  const postsById = new Map();
+
+  function videoHtml(p) {
+    return `<button class="video-thumb" type="button" data-video="${escapeHtml(p.video_id)}" aria-label="${escapeHtml(t("playVideo", { t: postTitle(p) }))}">
+      <img src="${ytThumb(p.video_id)}" alt="" loading="lazy"><span class="play">${icon("play")}</span></button>`;
+  }
+  function photosHtml(p, from) {
+    const list = p.photos.slice(from);
+    if (!list.length) return "";
+    return `<div class="post-strip">${list.map((ph, i) => `<button class="post-thumb" type="button" data-photo-post="${p.id}" data-photo-index="${i + from}" aria-label="${escapeHtml(t("openPhoto"))}"><img src="${media(ph)}" alt="" loading="lazy"></button>`).join("")}</div>`;
+  }
+  function postMedia(p) {
+    if (p.video_id) return videoHtml(p) + photosHtml(p, 0);
+    if (!p.photos.length) return "";
+    const more = p.photos.length - 1;
+    return `<button class="post-photo" type="button" data-photo-post="${p.id}" data-photo-index="0" aria-label="${escapeHtml(t("openPhoto"))}">
+      <img src="${media(p.photos[0])}" alt="" loading="lazy">${more ? `<span class="more">+${more}</span>` : ""}</button>`;
+  }
+  function postCard(p) {
+    const k = KINDS[p.kind] || KINDS.advice;
+    const body = postBody(p);
+    const long = body.length > 260 || body.split("\n").length > 5;
+    return `<article class="post c-${k.color} reveal${p.pinned ? " pinned" : ""}">
+      ${postMedia(p)}
+      <div class="post-text">
+        <div class="post-meta"><span class="chip kind">${icon(k.icon)} ${k.label[li()]}</span>${p.date ? `<span>${postDate(p)}</span>` : ""}</div>
+        <h3>${escapeHtml(postTitle(p))}</h3>
+        ${body ? `<p class="post-body${long ? " clamp" : ""}">${textHtml(body)}</p>${long ? `<button class="link-btn" type="button" data-more>${t("readMore")}</button>` : ""}` : ""}
+      </div>
+    </article>`;
+  }
+
+  // Front page: the newest "popup" event, once a day per post (Next goes through the others).
+  function showEventPopup(list) {
+    const seen = store.get("vhc-popup-seen", {});
+    const today = dateKey(new Date());
+    const queue = list.filter((p) => p.popup && seen[p.id] !== today);
+    if (!queue.length) return;
+    let at = 0;
+    const wrap = document.createElement("div");
+    wrap.className = "modal-wrap";
+    wrap.innerHTML = `<div class="modal" role="dialog" aria-modal="true" aria-labelledby="event-pop-title"></div>`;
+    const box = $(".modal", wrap);
+    const draw = () => {
+      const p = queue[at];
+      const body = postBody(p);
+      box.innerHTML = `
+        <button class="icon-btn modal-x" type="button" data-close aria-label="${t("close")}">${icon("x")}</button>
+        ${p.photos.length ? `<img class="modal-img" src="${media(p.photos[0])}" alt="">` : p.video_id ? `<img class="modal-img" src="${ytThumb(p.video_id)}" alt="">` : `<div class="modal-burst">${icon("megaphone")}</div>`}
+        <div class="modal-body">
+          <span class="kicker">${icon("megaphone")} ${t("newsKicker")}</span>
+          <h2 id="event-pop-title">${escapeHtml(postTitle(p))}</h2>
+          ${p.date ? `<p class="muted">${postDate(p)}</p>` : ""}
+          ${body ? `<p class="modal-text">${textHtml(body)}</p>` : ""}
+          <div class="btn-row start">
+            <a class="btn btn-gold btn-sm" href="#news" data-close>${t("seeNews")}</a>
+            ${queue.length > 1 ? `<button class="btn btn-light btn-sm" type="button" data-next>${t("nextNews", { n: at + 1, of: queue.length })}</button>` : ""}
+            <button class="btn btn-light btn-sm" type="button" data-close>${t("close")}</button>
+          </div>
+        </div>`;
+      $("[data-close]", box).focus();
+    };
+    const close = () => {
+      queue.forEach((p) => { seen[p.id] = today; });
+      store.set("vhc-popup-seen", seen);
+      wrap.classList.remove("show");
+      document.removeEventListener("keydown", onKey);
+      setTimeout(() => wrap.remove(), 250);
+    };
+    const onKey = (e) => { if (e.key === "Escape") close(); };
+    wrap.addEventListener("click", (e) => {
+      if (e.target === wrap || e.target.closest("[data-close]")) { close(); return; }
+      if (e.target.closest("[data-next]")) { at = (at + 1) % queue.length; draw(); }
+    });
+    document.addEventListener("keydown", onKey);
+    document.body.appendChild(wrap);
+    draw();
+    requestAnimationFrame(() => wrap.classList.add("show"));
+    renderers.push(() => { if (wrap.isConnected) draw(); });
+  }
+
+  // Photo viewer for every post photo on the page.
+  function openLightbox(post, index) {
+    let at = index;
+    const wrap = document.createElement("div");
+    wrap.className = "lightbox";
+    wrap.setAttribute("role", "dialog");
+    wrap.setAttribute("aria-modal", "true");
+    const many = post.photos.length > 1;
+    const draw = () => {
+      wrap.innerHTML = `<img src="${media(post.photos[at])}" alt="${escapeHtml(postTitle(post))}">
+        <div class="lb-cap">${escapeHtml(postTitle(post))}${many ? ` · ${at + 1} / ${post.photos.length}` : ""}</div>
+        <button class="icon-btn lb-x" type="button" data-close aria-label="${t("close")}">${icon("x")}</button>
+        ${many ? `<button class="icon-btn lb-prev" type="button" data-step="-1" aria-label="${t("prevPhoto")}">${icon("arrow-left")}</button>
+        <button class="icon-btn lb-next" type="button" data-step="1" aria-label="${t("nextPhoto")}">${icon("arrow")}</button>` : ""}`;
+      $("[data-close]", wrap).focus();
+    };
+    const step = (d) => { at = (at + d + post.photos.length) % post.photos.length; draw(); };
+    const close = () => { wrap.remove(); document.removeEventListener("keydown", onKey); };
+    const onKey = (e) => {
+      if (e.key === "Escape") close();
+      else if (many && e.key === "ArrowRight") step(1);
+      else if (many && e.key === "ArrowLeft") step(-1);
+    };
+    wrap.addEventListener("click", (e) => {
+      const s = e.target.closest("[data-step]");
+      if (s) step(Number(s.dataset.step));
+      else if (e.target === wrap || e.target.closest("[data-close]")) close();
+    });
+    let x0 = null;
+    wrap.addEventListener("touchstart", (e) => { x0 = e.touches[0].clientX; }, { passive: true });
+    wrap.addEventListener("touchend", (e) => {
+      if (x0 === null || !many) return;
+      const dx = e.changedTouches[0].clientX - x0;
+      if (Math.abs(dx) > 50) step(dx < 0 ? 1 : -1);
+      x0 = null;
+    });
+    document.addEventListener("keydown", onKey);
+    document.body.appendChild(wrap);
+    draw();
+  }
+
+  function initPosts() {
+    const news = $("#news"), health = $("#health-grid"), awards = $("#achievements");
+    if (!window.BookingAPI || (!news && !health && !awards)) return;
+    const tabs = $("#health-tabs");
+    let filter = "all";
+    let healthPosts = null;
+
+    document.addEventListener("click", (e) => {
+      const v = e.target.closest("[data-video]");
+      if (v) {
+        const frame = document.createElement("iframe");
+        frame.className = "video-frame";
+        frame.src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(v.dataset.video)}?autoplay=1&rel=0`;
+        frame.title = v.getAttribute("aria-label") || "Video";
+        frame.allow = "autoplay; encrypted-media; picture-in-picture; fullscreen";
+        frame.allowFullscreen = true;
+        v.replaceWith(frame);
+        return;
+      }
+      const ph = e.target.closest("[data-photo-post]");
+      if (ph && postsById.has(ph.dataset.photoPost)) { openLightbox(postsById.get(ph.dataset.photoPost), Number(ph.dataset.photoIndex)); return; }
+      const more = e.target.closest("[data-more]");
+      if (more) {
+        const body = more.previousElementSibling;
+        const open = body.classList.toggle("clamp") === false;
+        more.textContent = t(open ? "readLess" : "readMore");
+      }
+    });
+
+    const posts = (kind, limit) => window.BookingAPI.posts(kind, limit).then((list) => {
+      if (!Array.isArray(list)) throw new Error("Unexpected answer");
+      return list;
+    });
+    const remember = (list) => list.forEach((p) => postsById.set(p.id, p));
+    // First drawing slides the cards in; a tab or language change shows them at once.
+    const fill = (grid, list, emptyKey) => {
+      const again = grid.dataset.drawn === "1";
+      grid.innerHTML = list.length ? list.map(postCard).join("") : emptyKey ? `<div class="empty">${t(emptyKey)}</div>` : "";
+      grid.dataset.drawn = "1";
+      if (again) $$(".reveal", grid).forEach((el) => el.classList.add("in"));
+      else initReveal();
+    };
+
+    if (news) {
+      const grid = $("#news-grid");
+      posts("event", 6).then((list) => {
+        remember(list);
+        if (!list.length) return;
+        news.hidden = false;
+        const render = () => fill(grid, list);
+        render();
+        renderers.push(render);
+        setTimeout(() => showEventPopup(list), 900);
+      }).catch(() => { /* posts not set up yet: the section stays hidden */ });
+    }
+
+    if (awards) {
+      const grid = $("#achievement-grid");
+      posts("achievement", 30).then((list) => {
+        remember(list);
+        if (!list.length) return;
+        awards.hidden = false;
+        const render = () => fill(grid, list);
+        render();
+        renderers.push(render);
+      }).catch(() => { /* stays hidden */ });
+    }
+
+    if (health) {
+      const renderTabs = () => {
+        if (!tabs) return;
+        tabs.innerHTML = [["all", "navy", "allPosts"], ["exercise", "green", null], ["advice", "blue", null]].map(([id, color, key]) =>
+          `<button class="tab c-${color}" type="button" data-kind="${id}" aria-pressed="${id === filter}">${key ? t(key) : KINDS[id].label[li()]}</button>`).join("");
+      };
+      const render = () => {
+        if (!healthPosts) return;
+        fill(health, healthPosts.filter((p) => filter === "all" || p.kind === filter), "noPosts");
+      };
+      tabs && tabs.addEventListener("click", (e) => {
+        const b = e.target.closest("[data-kind]");
+        if (!b) return;
+        filter = b.dataset.kind;
+        $$(".tab", tabs).forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+        render();
+      });
+      renderTabs();
+      health.innerHTML = `<div class="empty"><span class="spinner"></span> ${t("loadingPosts")}</div>`;
+      Promise.all([posts("exercise", 60), posts("advice", 60)]).then(([ex, adv]) => {
+        healthPosts = [...ex, ...adv].sort((a, b) => Number(b.pinned) - Number(a.pinned) || String(b.date).localeCompare(String(a.date)));
+        remember(healthPosts);
+        render();
+      }).catch(() => { healthPosts = []; render(); });
+      renderers.push(() => { renderTabs(); render(); });
+    }
+  }
+
   /* ---------------------------------------------------------------- Boot */
   function renderAll() {
     I.applyStatic();
@@ -824,6 +1062,7 @@
     initMap();
     initContactForm();
     initBooking();
+    initPosts();
     initReveal();
     setInterval(renderOpenStatus, 60000);
   }

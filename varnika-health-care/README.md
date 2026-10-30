@@ -17,6 +17,8 @@ It is plain HTML, CSS and JavaScript with **no build step**. Open `index.html` i
 | `about.html` | Doctor profile with qualifications and registration number, about the clinic, what to bring, what to do outside clinic hours |
 | `services.html` | Full list of orthopaedic services with search and category tabs. Each service shows whether it is done **at the clinic** or as **surgery at a nearby hospital** |
 | `appointment.html` | Request an appointment in 4 steps: reason → date and time (5–9 PM, any day) → patient details → confirm. The request goes straight into the hospital's OPD software (see below); full times are shown as **Full**. The confirmation shows the "before you come" instructions in English and Tamil |
+| `health.html` | **Exercises & health tips**: the doctor's exercise posts (YouTube videos, step photos) and health advice, with tabs |
+| `admin.html` | **The doctor's posting page** (not in the menu, not in search engines): sign in with the doctor's OPD login and post news, exercises, advice and achievements from a phone |
 | `contact.html` | Address, timings with a live "open now" status, a WhatsApp message form, and a map |
 
 ## To do before publishing
@@ -33,6 +35,20 @@ Bookings go straight into the VHC OPD software (its Supabase database, update 21
 - `js/booking-api.js` calls three database functions: `website_booking_options`, `website_taken_slots` and `website_book_appointment`. The address and the **publishable** key are in `SITE.booking` in `js/data.js`. That key can only send a request and see which times are full; it cannot read any patient data. Never put a secret / service_role key on the website.
 - If the booking service cannot be reached, or reception has switched online booking off in the OPD app, the page falls back to the old way: the patient sends the request on WhatsApp.
 - Limits are set in the OPD app (default 2 per 15 minutes and 40 per day). A mobile number can have at most 3 open requests.
+
+## The doctor's posts (update 23)
+
+Open **varnikahospital.in/admin** on the phone and sign in with the doctor's OPD login (reception logins are refused).
+
+- **🎉 Hospital news** appears on the front page under "Hospital news & events", and as a **popup** until the last day you choose. Each visitor sees the popup once a day.
+- **🏃 Exercise** and **💡 Health advice** appear on the Health tips page (`health.html`).
+- **🏆 Achievement** appears on the Doctor page (`about.html`) under "Achievements & recognition".
+- **Photos:** up to 8 per post. The phone shrinks each one to about 200–400 KB (WebP) before uploading it to the public Supabase bucket `website-media`.
+- **Videos:** upload to YouTube (it can be *Unlisted*) and paste the link. The site plays them from youtube-nocookie.com.
+- Tamil title and text are optional. Without them, the Tamil site shows the English.
+- Use Edit, Hide and Delete in "Your posts". Delete also removes the photo files.
+
+The database checks that only the doctor can post or upload (`website_post_save`, `website_post_delete` and the storage policies). The website reads published posts through `website_posts`. The `_headers` CSP allows images from Supabase and `i.ytimg.com`, and frames from `www.youtube-nocookie.com`.
 
 ## Publishing on Cloudflare Pages (recommended, free)
 

@@ -138,6 +138,17 @@
       <a class="quick-tile red reveal" data-directions href="https://maps.app.goo.gl/VpykLbZAs5YMKypq6" target="_blank" rel="noopener"><span class="qi"><svg class="ic"><use href="#i-pin"/></svg></span><span><strong data-i18n="home.q4">Directions</strong><small data-i18n="home.q4s">Opp. Keeramangalam bus stand</small></span></a>
     </section>
 
+    <!-- Hospital news (the doctor's event posts; hidden until there is one) -->
+    <section class="section news" id="news" hidden>
+      <div class="container">
+        <div class="section-head">
+          <span class="kicker" data-i18n="home.kNews">What's new</span>
+          <h2 data-i18n="home.newsTitle">Hospital news &amp; events</h2>
+        </div>
+        <div class="grid grid-3 posts" id="news-grid"></div>
+      </div>
+    </section>
+
     <!-- Facilities -->
     <section class="section">
       <div class="container">
@@ -231,6 +242,7 @@
   <div data-include="footer"></div>
   <script src="js/data.js"></script>
   <script src="js/i18n.js"></script>
+  <script src="js/booking-api.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

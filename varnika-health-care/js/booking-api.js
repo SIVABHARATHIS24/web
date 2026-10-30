@@ -39,5 +39,9 @@
     book: (booking) => rpc("website_book_appointment", booking, 20000),
     // The patient paid the OPD fee by UPI: { ok: true, payment_status } or { ok: false, error, message }
     submitPayment: (ref, phone, utr) => rpc("website_submit_payment", { ref, phone, utr }, 20000),
+    // The doctor's posts (update 23): [{ id, kind, title, title_ta, body, body_ta, photos, video_id, date, popup, pinned }]
+    posts: (kind, limit) => rpc("website_posts", { p_kind: kind || null, p_limit: limit || 60 }),
+    // Public address of a posted photo (bucket "website-media").
+    mediaUrl: (path) => `${cfg.url}/storage/v1/object/public/website-media/${path}`,
   };
 })();
