@@ -1,7 +1,7 @@
 /* ==========================================================================
    Varnika Speciality Hospital
    Bright theme that matches the prescription: white pages, navy blue and
-   golden yellow, the running-man logo. Colour carries meaning: gold = book,
+   golden yellow, the green spine logo. Colour carries meaning: gold = book,
    green = open / available / WhatsApp, red = full / emergency, blue = info,
    and each kind of problem has its own colour (fractures orange, joints blue,
    spine purple, children pink…). Every animation stops under reduced motion.
@@ -120,6 +120,7 @@ p { margin: 0 0 1em; }
 .brand-tag { font-size: .8rem; font-weight: 600; color: #c88f00; margin-top: 3px; white-space: nowrap; }
 .brand.light .brand-name, .brand.light .brand-name span { color: #fff; }
 .brand.light .brand-tag { color: var(--gold-2); }
+.brand.light img { box-sizing: border-box; padding: 5px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 3px #8ac040; }
 
 .nav { display: flex; align-items: center; gap: 4px; margin-left: auto; }
 .nav a:not(.btn) { position: relative; padding: 8px 12px; color: var(--ink); font-weight: 600; font-size: .95rem; border-radius: 8px; text-decoration: none; }
