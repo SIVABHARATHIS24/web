@@ -102,7 +102,7 @@
 
   function brandHtml(light) {
     return `<a class="brand${light ? " light" : ""}" href="index.html" aria-label="${SITE.name}">
-      <img src="img/logo.svg" alt="" width="52" height="52">
+      <img src="img/logo.svg?v=2" alt="" width="52" height="52">
       <span class="brand-text"><span class="brand-name">Varnika <span>Speciality Hospital</span></span><span class="brand-tag">${L(SITE.tagline)}</span></span>
     </a>`;
   }
