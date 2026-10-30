@@ -90,7 +90,13 @@
   const inHours = (h, m = nowMinutes()) => m >= toMin(h[0]) && m < toMin(h[1]);
   // Days of the week (0 = Sunday) with no doctor; the OPD service's list replaces it when online.
   let doctorOffDays = SITE.doctorOffDays || [];
+  // Dates ('YYYY-MM-DD') the doctor comes although it is a day off, e.g. one Sunday (update 25).
+  let doctorExtraDays = [];
   const doctorDay = (d) => !doctorOffDays.includes(d);
+  const ymd = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  const doctorOn = (date) => doctorDay(date.getDay()) || doctorExtraDays.includes(ymd(date));
+  // The OPD service's settings, read once per page (null when it cannot be reached).
+  const siteOptions = window.BookingAPI ? window.BookingAPI.options().catch(() => null) : Promise.resolve(null);
 
   /* ---------------------------------------------------------------- Layout */
   const NAV = [
@@ -264,7 +270,7 @@
   // Open = the lab is open; the long label also says whether the doctor is in yet.
   function renderOpenStatus() {
     const open = inHours(SITE.labHours);
-    const doctorToday = doctorDay(new Date().getDay());
+    const doctorToday = doctorOn(new Date());
     const doctorIn = doctorToday && inHours(SITE.hours);
     $$("[data-open-status]").forEach((el) => {
       el.classList.toggle("closed", !open);
@@ -280,7 +286,13 @@
       const row = (th, cls, off) => `<tr class="${cls || ""}"><th>${th}</th><td class="lab">${LAB_TEXT}</td><td${off ? ' class="off"' : ""}>${off ? t("noDoctor") : HOURS_TEXT}</td></tr>`;
       table.innerHTML = `<tr class="head"><th>${t("colDay")}</th><td class="lab">${t("colLab")}</td><td>${t("colDoctor")}</td></tr>`
         + [1, 2, 3, 4, 5, 6, 0].map((d) => row(`${I.dayLong(d)}${d === today ? t("todayMark") : ""}`, d === today ? "today" : "", !doctorDay(d))).join("")
-        + row(t("holidays"));
+        + row(t("holidays"))
+        // A day off the doctor opened: its own green row with the date.
+        + doctorExtraDays.slice(0, 4).map((k) => {
+          const [y, m, dd] = k.split("-").map(Number);
+          const d = new Date(y, m - 1, dd);
+          return `<tr class="special"><th>⭐ ${I.day(d.getDay())}, ${d.getDate()} ${I.month(d.getMonth())}</th><td class="lab">${LAB_TEXT}</td><td>${HOURS_TEXT}<small>${t("doctorComing")}</small></td></tr>`;
+        }).join("");
     });
   }
 
@@ -461,11 +473,11 @@
     const taken = {}; // date -> Set of "HH:MM" that are full or past
     const useOnline = () => service.online && !service.closed;
     if (api) {
-      api.options().then((o) => {
+      siteOptions.then((o) => {
+        if (!o) throw new Error("offline");
         service.online = true;
         service.closed = !o.accepting;
         service.lastDate = o.last_date || null;
-        if (Array.isArray(o.off_days)) { doctorOffDays = o.off_days; renderOpenStatus(); }
         if (o.fee > 0 && o.upi_id) Object.assign(upi, { fee: o.fee, id: o.upi_id, name: o.upi_name || SITE.name });
         renderMine();
         drawPayment();
@@ -503,7 +515,7 @@
         const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() + i);
         const k = dateKey(d);
         if (service.lastDate && k > service.lastDate) break;
-        if (!doctorDay(d.getDay())) {
+        if (!doctorOn(d)) {
           if (state.date === k) state.date = null;
           chips.push(`<button type="button" class="date-chip off" disabled title="${t("noDoctor")}">
           <small>${I.day(d.getDay())}</small><strong>${d.getDate()}</strong><small class="no-dr">${t("noDoctor")}</small></button>`);
@@ -1050,6 +1062,16 @@
     }
   }
 
+  // The doctor's days off and the days opened after all, from the OPD service.
+  function initDoctorDays() {
+    siteOptions.then((o) => {
+      if (!o) return;
+      if (Array.isArray(o.off_days)) doctorOffDays = o.off_days;
+      if (Array.isArray(o.extra_days)) doctorExtraDays = o.extra_days;
+      renderOpenStatus();
+    });
+  }
+
   /* ---------------------------------------------------------------- Boot */
   function renderAll() {
     I.applyStatic();
@@ -1068,6 +1090,7 @@
     fillSiteData();
     renderOpenStatus();
     initGlobal();
+    initDoctorDays();
     initFacilities();
     initServices();
     initFaq();

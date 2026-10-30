@@ -167,6 +167,7 @@
     $("#sign-out").hidden = false;
     resetForm();
     loadPosts();
+    loadDays();
   }
 
   function signOut() {
@@ -430,6 +431,111 @@
     } catch (err) {
       btn.disabled = false;
       toast(friendly(err));
+    }
+  });
+
+  /* ---------------------------------------------------------------- Coming on a day off (update 25) */
+  const DAY_EN = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const DAY_TA = ["ஞாயிறு", "திங்கள்", "செவ்வாய்", "புதன்", "வியாழன்", "வெள்ளி", "சனி"];
+  const fmt = (hhmm) => { const [h, m] = hhmm.split(":").map(Number); return `${h % 12 || 12}${m ? ":" + String(m).padStart(2, "0") : ""} ${h >= 12 ? "PM" : "AM"}`; };
+  const DOCTOR_HOURS = (window.SITE && window.SITE.hours) ? `${fmt(window.SITE.hours[0])} – ${fmt(window.SITE.hours[1])}` : "5 PM – 9 PM";
+  const toDate = (k) => { const [y, m, d] = k.split("-").map(Number); return new Date(y, m - 1, d); };
+  let offDays = [];
+  let extraDays = [];
+  const picked = new Set();
+
+  // The next 8 days off (up to 120 days ahead), plus any opened day further on.
+  function offDates() {
+    const out = [];
+    for (let i = 0; i <= 120 && out.length < 8; i++) {
+      const d = new Date(); d.setDate(d.getDate() + i);
+      if (offDays.includes(d.getDay())) out.push(dateKey(d));
+    }
+    extraDays.forEach((k) => { if (!out.includes(k)) out.push(k); });
+    return out.sort();
+  }
+
+  function drawDays() {
+    const list = offDates();
+    $("#days-lead").textContent = offDays.length
+      ? `Days off: ${offDays.map((d) => DAY_EN[d]).join(", ")}. Tick the ones you will see patients (${DOCTOR_HOURS}); online booking opens for them.`
+      : "There are no days off: the doctor is in every day.";
+    $("#day-pick").innerHTML = list.map((k) => {
+      const d = toDate(k), on = picked.has(k);
+      return `<button type="button" class="day-chip${on ? " on" : ""}" data-day="${k}" aria-pressed="${on}">
+        <small>${DAY_EN[d.getDay()].slice(0, 3)}</small><strong>${d.getDate()}</strong><small>${d.toLocaleDateString("en-GB", { month: "short" })}</small>
+        <span>${on ? "✔ Coming" : "Off"}</span></button>`;
+    }).join("");
+  }
+
+  async function loadDays() {
+    msg("#days-msg", "");
+    try {
+      const o = await rpc("website_booking_options");
+      if (!Array.isArray(o.off_days) || !Array.isArray(o.extra_days)) {
+        $("#days-save").disabled = true;
+        msg("#days-msg", "Run updates 24 and 25 (24_update_doctor_days.sql, 25_update_doctor_extra_days.sql) in Supabase first.");
+        return;
+      }
+      offDays = o.off_days;
+      extraDays = o.extra_days;
+      picked.clear();
+      extraDays.forEach((k) => picked.add(k));
+      $("#days-save").disabled = false;
+      drawDays();
+    } catch (err) {
+      msg("#days-msg", friendly(err));
+    }
+  }
+
+  $("#day-pick").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-day]");
+    if (!b) return;
+    const k = b.dataset.day;
+    if (picked.has(k)) picked.delete(k); else picked.add(k);
+    drawDays();
+  });
+
+  // A short news post with a front-page popup until that day.
+  function dayNews(k) {
+    const d = toDate(k);
+    const when = `${DAY_EN[d.getDay()]}, ${pretty(k)}`;
+    const whenTa = `${pretty(k)} (${DAY_TA[d.getDay()]})`;
+    return {
+      p_id: null, p_kind: "event",
+      p_title: `Doctor available on ${when}`,
+      p_title_ta: `${whenTa} அன்று மருத்துவர் வருவார்`,
+      p_body: `The doctor will see patients on ${when}, ${DOCTOR_HOURS}. Book online or walk in. Lab, X-ray and ECG are open from 8 AM as usual.`,
+      p_body_ta: `${whenTa} அன்று ${DOCTOR_HOURS} மருத்துவர் நோயாளிகளைப் பார்ப்பார். ஆன்லைனில் முன்பதிவு செய்யலாம் அல்லது நேரடியாக வரலாம்.`,
+      p_photos: [], p_video_id: null, p_event_date: k, p_popup_until: k, p_published: true, p_pinned: false,
+    };
+  }
+
+  $("#days-save").addEventListener("click", async () => {
+    const btn = $("#days-save");
+    btn.disabled = true;
+    msg("#days-msg", "Saving…", true);
+    try {
+      const before = new Set(extraDays);
+      const kept = await rpc("website_doctor_days_save", { p_days: [...picked] });
+      extraDays = kept || [];
+      picked.clear();
+      extraDays.forEach((k) => picked.add(k));
+      drawDays();
+      const added = extraDays.filter((k) => !before.has(k));
+      let posted = 0;
+      if (added.length && $("#day-popup").checked) {
+        for (const k of added) {
+          try { await rpc("website_post_save", dayNews(k)); posted++; } catch { /* the day is open even without the news post */ }
+        }
+        if (posted) loadPosts();
+      }
+      msg("#days-msg", "");
+      toast(added.length ? `✔ Saved — patients can book ${added.map(pretty).join(", ")}${posted ? " (popup posted)" : ""}.` : "✔ Saved.");
+    } catch (err) {
+      msg("#days-msg", friendly(err));
+    } finally {
+      btn.disabled = false;
     }
   });
 

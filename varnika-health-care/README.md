@@ -35,6 +35,7 @@ Bookings go straight into the VHC OPD software (its Supabase database, update 21
 - `js/booking-api.js` calls three database functions: `website_booking_options`, `website_taken_slots` and `website_book_appointment`. The address and the **publishable** key are in `SITE.booking` in `js/data.js`. That key can only send a request and see which times are full; it cannot read any patient data. Never put a secret / service_role key on the website.
 - If the booking service cannot be reached, or reception has switched online booking off in the OPD app, the page falls back to the old way: the patient sends the request on WhatsApp.
 - **No doctor on Sundays** (update 24): Sundays are greyed out in the calendar and the booking service refuses them. Lab, X-ray and ECG stay open every day. The days are `doctor_off_days` in the OPD database (0 = Sunday); `doctorOffDays` in `js/data.js` is only the fallback.
+- **Coming on a Sunday after all** (update 25): on `admin.html`, the doctor ticks that Sunday under "Coming on a Sunday?". Booking opens for it, the timings show it as a green ⭐ row, and (optionally) a news popup tells patients until that day.
 - Limits are set in the OPD app (default 2 per 15 minutes and 40 per day). A mobile number can have at most 3 open requests.
 
 ## The doctor's posts (update 23)
@@ -53,7 +54,7 @@ The database checks that only the doctor can post or upload (`website_post_save`
 
 ## After changing a file
 
-Cloudflare tells browsers to keep images, scripts and styles for 4 hours. The pages link them with a version (`css/styles.css?v=3`, `img/logo.svg?v=2`). When you change one of those files, raise its number in every `.html` file (and in `js/main.js` for the logo), so visitors get the new file straight away.
+Cloudflare tells browsers to keep images, scripts and styles for 4 hours. The pages link them with a version (`css/styles.css?v=3`, `img/logo.svg?v=2`). When you change one of those files, raise its number in every `.html` file (all files share one number; it is 5 now) (and in `js/main.js` for the logo), so visitors get the new file straight away.
 
 ## Publishing on Cloudflare Pages (recommended, free)
 

@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Noto+Sans:wght@400;500;600;700&family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=4">
+  <link rel="stylesheet" href="css/styles.css?v=5">
 </head>
 <body class="admin">
   <header class="admin-bar">
@@ -32,6 +32,16 @@
     </form>
 
     <div id="workspace" hidden>
+      <!-- A day off the doctor comes after all (update 25) -->
+      <section class="card admin-card" id="days-card">
+        <h1>🩺 Coming on a Sunday?</h1>
+        <p class="muted" id="days-lead">Tick the days you will see patients. Online booking opens for those days.</p>
+        <div class="day-pick" id="day-pick"></div>
+        <label class="check"><input type="checkbox" id="day-popup" checked> 🔔 Also tell patients with a popup on the front page</label>
+        <div class="btn-row start"><button class="btn btn-gold" type="button" id="days-save">💾 Save days</button></div>
+        <p class="admin-msg" id="days-msg" role="alert"></p>
+      </section>
+
       <!-- New post / edit -->
       <form class="card admin-card" id="post-form" novalidate>
         <h1 id="form-title">📢 New post</h1>
@@ -92,7 +102,7 @@
   </main>
   <div class="toast" role="status" aria-live="polite"></div>
 
-  <script src="js/data.js?v=4"></script>
-  <script src="js/admin.js?v=4"></script>
+  <script src="js/data.js?v=5"></script>
+  <script src="js/admin.js?v=5"></script>
 </body>
 </html>
